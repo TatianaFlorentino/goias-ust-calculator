@@ -5,6 +5,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Checkbox } from '@/components/ui/checkbox';
 import { ProfessionalProfile, SquadComposition, Project } from '@/types/calculator';
 
 interface SquadFormModalProps {
@@ -20,7 +21,7 @@ const SquadFormModal: React.FC<SquadFormModalProps> = ({
   onAddSquad,
   onCancel
 }) => {
-  const [selectedProjectId, setSelectedProjectId] = useState<string>('');
+  const [selectedProjectIds, setSelectedProjectIds] = useState<string[]>([]);
   const [newSquad, setNewSquad] = useState<Omit<SquadComposition, 'id'>>({
     profileId: '',
     quantity: 1,
@@ -28,30 +29,43 @@ const SquadFormModal: React.FC<SquadFormModalProps> = ({
     complexity: 'baixa'
   });
 
-  const selectedProject = availableProjects.find(p => p.id === selectedProjectId);
-
-  const handleProjectSelect = (projectId: string) => {
-    setSelectedProjectId(projectId);
-    const project = availableProjects.find(p => p.id === projectId);
-    if (project) {
-      setNewSquad({
-        ...newSquad,
-        type: project.type,
-        complexity: project.complexity
-      });
+  const handleProjectToggle = (projectId: string, checked: boolean) => {
+    if (checked) {
+      setSelectedProjectIds(prev => [...prev, projectId]);
+    } else {
+      setSelectedProjectIds(prev => prev.filter(id => id !== projectId));
     }
   };
 
+  const handleSelectAllProjects = () => {
+    setSelectedProjectIds(availableProjects.map(p => p.id));
+  };
+
+  const handleDeselectAllProjects = () => {
+    setSelectedProjectIds([]);
+  };
+
   const handleAddSquad = () => {
-    if (newSquad.profileId && selectedProjectId) {
-      onAddSquad(newSquad);
+    if (newSquad.profileId && selectedProjectIds.length > 0) {
+      // Criar um squad para cada projeto selecionado
+      selectedProjectIds.forEach(projectId => {
+        const project = availableProjects.find(p => p.id === projectId);
+        if (project) {
+          onAddSquad({
+            ...newSquad,
+            type: project.type,
+            complexity: project.complexity
+          });
+        }
+      });
+      
       setNewSquad({
         profileId: '',
         quantity: 1,
         type: 'projeto',
         complexity: 'baixa'
       });
-      setSelectedProjectId('');
+      setSelectedProjectIds([]);
       onCancel();
     }
   };
@@ -74,6 +88,8 @@ const SquadFormModal: React.FC<SquadFormModalProps> = ({
     }
   };
 
+  const selectedProjects = availableProjects.filter(p => selectedProjectIds.includes(p.id));
+
   return (
     <Card className="border-emerald-200">
       <CardHeader>
@@ -81,35 +97,87 @@ const SquadFormModal: React.FC<SquadFormModalProps> = ({
       </CardHeader>
       <CardContent className="space-y-4">
         <div className="grid grid-cols-1 gap-4">
-          {/* Seleção de Projeto */}
+          {/* Seleção de Projetos com Checkbox */}
           <div className="space-y-2">
-            <Label>Selecionar Projeto *</Label>
-            <Select 
-              value={selectedProjectId} 
-              onValueChange={handleProjectSelect}
-            >
-              <SelectTrigger className="border-emerald-200 focus:border-emerald-600">
-                <SelectValue placeholder="Escolha o projeto para este squad" />
-              </SelectTrigger>
-              <SelectContent>
-                {availableProjects.map((project) => (
-                  <SelectItem key={project.id} value={project.id}>
-                    {project.name} - {getTypeLabel(project.type)} ({getComplexityLabel(project.complexity)})
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
+            <div className="flex justify-between items-center">
+              <Label>Selecionar Projetos *</Label>
+              <div className="flex gap-2">
+                <Button
+                  type="button"
+                  variant="outline"
+                  size="sm"
+                  onClick={handleSelectAllProjects}
+                  className="text-xs"
+                >
+                  Selecionar Todos
+                </Button>
+                <Button
+                  type="button"
+                  variant="outline"
+                  size="sm"
+                  onClick={handleDeselectAllProjects}
+                  className="text-xs"
+                >
+                  Desmarcar Todos
+                </Button>
+              </div>
+            </div>
+            
+            <div className="border border-emerald-200 rounded-lg p-3 max-h-48 overflow-y-auto">
+              {availableProjects.length > 0 ? (
+                <div className="space-y-2">
+                  {availableProjects.map((project) => (
+                    <div key={project.id} className="flex items-center space-x-2">
+                      <Checkbox
+                        id={`project-${project.id}`}
+                        checked={selectedProjectIds.includes(project.id)}
+                        onCheckedChange={(checked) => handleProjectToggle(project.id, checked as boolean)}
+                      />
+                      <label
+                        htmlFor={`project-${project.id}`}
+                        className="text-sm font-medium cursor-pointer flex-1"
+                      >
+                        {project.name} - {getTypeLabel(project.type)} ({getComplexityLabel(project.complexity)}) - {project.duration} semanas
+                      </label>
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                <p className="text-sm text-gray-500">Nenhum projeto disponível</p>
+              )}
+            </div>
           </div>
 
-          {/* Informações do Projeto Selecionado */}
-          {selectedProject && (
+          {/* Combobox com Projetos Selecionados */}
+          {selectedProjects.length > 0 && (
+            <div className="space-y-2">
+              <Label>Projetos Selecionados ({selectedProjects.length})</Label>
+              <Select>
+                <SelectTrigger className="border-emerald-200 focus:border-emerald-600">
+                  <SelectValue placeholder="Visualizar projetos selecionados" />
+                </SelectTrigger>
+                <SelectContent>
+                  {selectedProjects.map((project) => (
+                    <SelectItem key={project.id} value={project.id}>
+                      {project.name} - {getTypeLabel(project.type)} ({getComplexityLabel(project.complexity)})
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+          )}
+
+          {/* Resumo dos Projetos Selecionados */}
+          {selectedProjects.length > 0 && (
             <div className="bg-blue-50 p-3 rounded-lg border border-blue-200">
-              <h4 className="font-medium text-blue-800 mb-2">Projeto Selecionado:</h4>
+              <h4 className="font-medium text-blue-800 mb-2">Resumo dos Projetos Selecionados:</h4>
               <div className="text-sm text-blue-700 space-y-1">
-                <div><strong>Nome:</strong> {selectedProject.name}</div>
-                <div><strong>Tipo:</strong> {getTypeLabel(selectedProject.type)}</div>
-                <div><strong>Complexidade:</strong> {getComplexityLabel(selectedProject.complexity)}</div>
-                <div><strong>Duração:</strong> {selectedProject.duration} semanas</div>
+                {selectedProjects.map((project) => (
+                  <div key={project.id} className="flex justify-between">
+                    <span><strong>{project.name}</strong></span>
+                    <span>{getTypeLabel(project.type)} - {getComplexityLabel(project.complexity)} - {project.duration}sem</span>
+                  </div>
+                ))}
               </div>
             </div>
           )}
@@ -153,9 +221,9 @@ const SquadFormModal: React.FC<SquadFormModalProps> = ({
           <Button 
             onClick={handleAddSquad} 
             className="bg-emerald-600 hover:bg-emerald-700"
-            disabled={!selectedProjectId || !newSquad.profileId}
+            disabled={selectedProjectIds.length === 0 || !newSquad.profileId}
           >
-            Adicionar ao Squad
+            Adicionar Squad para {selectedProjectIds.length} Projeto(s)
           </Button>
           <Button variant="outline" onClick={onCancel}>
             Cancelar

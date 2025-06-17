@@ -126,42 +126,37 @@ const Step4SquadComposition: React.FC<Step4SquadCompositionProps> = ({
       <CardHeader className="text-center bg-gradient-to-r from-emerald-600 to-emerald-700 text-white rounded-t-lg">
         <CardTitle className="text-2xl">Etapa 05 - Formato dos Squads</CardTitle>
         <CardDescription className="text-gray-100">
-          Defina a composição das equipes para cada projeto cadastrado
+          Selecione os projetos e defina a composição das equipes
         </CardDescription>
       </CardHeader>
       <CardContent className="space-y-6 p-6">
-        {/* Lista de Projetos Cadastrados para Seleção */}
+        {/* Lista de Projetos Cadastrados */}
         <div className="bg-blue-50 p-4 rounded-lg border border-blue-200">
           <h3 className="text-lg font-medium text-blue-800 mb-3">
             Projetos Disponíveis para Composição de Squad ({projects.length})
           </h3>
           <p className="text-sm text-blue-700 mb-3">
-            Selecione um projeto abaixo para definir sua composição de squad:
+            Use o botão "Criar Squad" para selecionar projetos e definir suas composições:
           </p>
-          {projects.length > 0 ? (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
-              {projects.map((project) => (
-                <div key={project.id} className="bg-white p-3 rounded-md border border-blue-100 hover:shadow-md transition-shadow">
-                  <h4 className="font-medium text-blue-900 mb-2">{project.name}</h4>
-                  <div className="text-sm text-blue-700 space-y-1 mb-3">
-                    <div><strong>Tipo:</strong> {getTypeLabel(project.type)}</div>
-                    <div><strong>Complexidade:</strong> {getComplexityLabel(project.complexity)}</div>
-                    <div><strong>Duração:</strong> {project.duration} semanas</div>
-                  </div>
-                  <Button
-                    size="sm"
-                    onClick={() => setIsAddingSquad(true)}
-                    className="w-full bg-blue-600 hover:bg-blue-700"
-                  >
-                    <Plus className="w-3 h-3 mr-1" />
-                    Criar Squad
-                  </Button>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3 mb-4">
+            {projects.map((project) => (
+              <div key={project.id} className="bg-white p-3 rounded-md border border-blue-100">
+                <h4 className="font-medium text-blue-900 mb-2">{project.name}</h4>
+                <div className="text-sm text-blue-700 space-y-1">
+                  <div><strong>Tipo:</strong> {getTypeLabel(project.type)}</div>
+                  <div><strong>Complexidade:</strong> {getComplexityLabel(project.complexity)}</div>
+                  <div><strong>Duração:</strong> {project.duration} semanas</div>
                 </div>
-              ))}
-            </div>
-          ) : (
-            <p className="text-blue-700">Nenhum projeto cadastrado ainda.</p>
-          )}
+              </div>
+            ))}
+          </div>
+          <Button
+            onClick={() => setIsAddingSquad(true)}
+            className="bg-blue-600 hover:bg-blue-700"
+          >
+            <Plus className="w-4 h-4 mr-2" />
+            Criar Squad
+          </Button>
         </div>
 
         <div className="flex justify-between items-center">
@@ -195,15 +190,14 @@ const Step4SquadComposition: React.FC<Step4SquadCompositionProps> = ({
         {squads.length === 0 && (
           <div className="text-center py-8 text-gray-500">
             <p>Nenhuma composição de squad criada ainda.</p>
-            <p className="text-sm">Selecione um projeto acima e clique em "Criar Squad" para começar.</p>
+            <p className="text-sm">Clique em "Criar Squad" para selecionar projetos e definir suas composições.</p>
           </div>
         )}
 
         <div className="bg-emerald-50 p-4 rounded-lg border border-emerald-200">
           <p className="text-sm text-emerald-800">
-            <strong>Dica:</strong> Cada projeto pode ter múltiplas composições de squad. 
-            As composições são automaticamente associadas aos projetos do mesmo tipo e complexidade 
-            para o cálculo final.
+            <strong>Dica:</strong> Use os checkboxes para selecionar múltiplos projetos ao criar uma composição de squad. 
+            Cada projeto selecionado terá sua própria composição criada automaticamente.
           </p>
         </div>
       </CardContent>
