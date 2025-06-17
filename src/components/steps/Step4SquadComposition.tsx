@@ -7,11 +7,12 @@ import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Badge } from '@/components/ui/badge';
 import { Plus, X } from 'lucide-react';
-import { ProfessionalProfile, SquadComposition } from '@/types/calculator';
+import { ProfessionalProfile, SquadComposition, Project } from '@/types/calculator';
 
 interface Step4SquadCompositionProps {
   profiles: ProfessionalProfile[];
   selectedProfileIds: string[];
+  projects: Project[];
   squads: SquadComposition[];
   onAddSquad: (squad: Omit<SquadComposition, 'id'>) => void;
   onUpdateSquad: (id: string, squad: Partial<SquadComposition>) => void;
@@ -21,6 +22,7 @@ interface Step4SquadCompositionProps {
 const Step4SquadComposition: React.FC<Step4SquadCompositionProps> = ({
   profiles,
   selectedProfileIds,
+  projects,
   squads,
   onAddSquad,
   onUpdateSquad,
@@ -87,6 +89,16 @@ const Step4SquadComposition: React.FC<Step4SquadCompositionProps> = ({
     return groups;
   }, {} as Record<string, SquadComposition[]>);
 
+  // Agrupar projetos por tipo e complexidade
+  const groupedProjects = projects.reduce((groups, project) => {
+    const key = project.type === 'projeto' ? `${project.type}-${project.complexity}` : project.type;
+    if (!groups[key]) {
+      groups[key] = [];
+    }
+    groups[key].push(project);
+    return groups;
+  }, {} as Record<string, Project[]>);
+
   if (availableProfiles.length === 0) {
     return (
       <Card className="w-full animate-fade-in">
@@ -122,9 +134,53 @@ const Step4SquadComposition: React.FC<Step4SquadCompositionProps> = ({
         </CardDescription>
       </CardHeader>
       <CardContent className="space-y-6 p-6">
+        {/* Resumo dos Recursos Disponíveis */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+          <Card className="border-emerald-200 bg-emerald-50">
+            <CardHeader className="pb-3">
+              <CardTitle className="text-lg text-emerald-700">Perfis Selecionados</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <p className="text-2xl font-bold text-emerald-800 mb-2">{availableProfiles.length}</p>
+              <div className="text-sm text-emerald-700 space-y-1 max-h-32 overflow-y-auto">
+                {availableProfiles.map(profile => (
+                  <div key={profile.id} className="flex justify-between">
+                    <span className="truncate">{profile.name}</span>
+                    <span className="font-medium">FCP: {profile.fcp}</span>
+                  </div>
+                ))}
+              </div>
+            </CardContent>
+          </Card>
+
+          <Card className="border-blue-200 bg-blue-50">
+            <CardHeader className="pb-3">
+              <CardTitle className="text-lg text-blue-700">Projetos Cadastrados</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <p className="text-2xl font-bold text-blue-800 mb-2">{projects.length}</p>
+              <div className="text-sm text-blue-700 space-y-1 max-h-32 overflow-y-auto">
+                {projects.map(project => (
+                  <div key={project.id} className="flex justify-between items-center">
+                    <span className="truncate">{project.name}</span>
+                    <div className="flex gap-1">
+                      <Badge className={getTypeColor(project.type)} size="sm">
+                        {project.type}
+                      </Badge>
+                      <Badge className={getComplexityColor(project.complexity)} size="sm">
+                        {project.complexity}
+                      </Badge>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+
         <div className="flex justify-between items-center">
           <h3 className="text-lg font-medium text-emerald-700">
-            Composições de Squad ({squads.length}) - {availableProfiles.length} perfis disponíveis
+            Composições de Squad ({squads.length})
           </h3>
           <Button
             onClick={() => setIsAddingSquad(true)}
@@ -222,7 +278,7 @@ const Step4SquadComposition: React.FC<Step4SquadCompositionProps> = ({
           </Card>
         )}
 
-        {/* Exibir squads agrupados */}
+        {/* Exibir squads agrupados com projetos correspondentes */}
         <div className="space-y-6">
           {Object.entries(groupedSquads).map(([groupKey, groupSquads]) => {
             const [type, complexity] = groupKey.split('-');
@@ -234,24 +290,46 @@ const Step4SquadComposition: React.FC<Step4SquadCompositionProps> = ({
               return sum + (squad.quantity * getProfileFCP(squad.profileId) * 40);
             }, 0);
 
+            const relatedProjects = groupedProjects[groupKey] || [];
+            const totalDuration = relatedProjects.reduce((sum, project) => sum + project.duration, 0);
+
             return (
               <Card key={groupKey} className="border-emerald-200">
                 <CardHeader className="bg-emerald-50">
                   <div className="flex justify-between items-center">
                     <CardTitle className="text-lg text-emerald-800">{groupTitle}</CardTitle>
-                    <div className="text-sm text-emerald-700">
-                      Total UST/Semana: <span className="font-bold">{totalUST.toFixed(0)}</span>
+                    <div className="text-sm text-emerald-700 text-right">
+                      <div>Total UST/Semana: <span className="font-bold">{totalUST.toFixed(0)}</span></div>
+                      <div>Projetos: <span className="font-bold">{relatedProjects.length}</span></div>
+                      <div>Duração Total: <span className="font-bold">{totalDuration} semanas</span></div>
                     </div>
                   </div>
                 </CardHeader>
-                <CardContent className="p-4">
+                <CardContent className="p-4 space-y-4">
+                  {/* Projetos Relacionados */}
+                  {relatedProjects.length > 0 && (
+                    <div className="bg-blue-50 p-3 rounded-lg border border-blue-200">
+                      <h5 className="font-medium text-blue-800 mb-2">Projetos Relacionados:</h5>
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
+                        {relatedProjects.map(project => (
+                          <div key={project.id} className="flex justify-between items-center text-sm">
+                            <span className="text-blue-700">{project.name}</span>
+                            <span className="text-blue-600">{project.duration} sem</span>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Composição do Squad */}
                   <div className="space-y-3">
+                    <h5 className="font-medium text-emerald-800">Composição do Squad:</h5>
                     {groupSquads.map((squad) => (
                       <div key={squad.id} className="flex items-center justify-between p-3 border border-emerald-100 rounded-lg bg-white">
                         <div className="flex-1">
-                          <h4 className="font-medium text-emerald-800 mb-1">
+                          <h6 className="font-medium text-emerald-800 mb-1">
                             {getProfileName(squad.profileId)}
-                          </h4>
+                          </h6>
                           <div className="grid grid-cols-3 gap-4 text-sm">
                             <div>
                               <span className="text-gray-600">Quantidade:</span>
@@ -293,8 +371,8 @@ const Step4SquadComposition: React.FC<Step4SquadCompositionProps> = ({
 
         <div className="bg-emerald-50 p-4 rounded-lg border border-emerald-200">
           <p className="text-sm text-emerald-800">
-            <strong>Dica:</strong> Você pode cadastrar múltiplos perfis para simular 
-            todos os tipos necessários para entregar um projeto completo.
+            <strong>Dica:</strong> As composições de squad são automaticamente associadas aos projetos 
+            cadastrados do mesmo tipo e complexidade para o cálculo final.
           </p>
         </div>
       </CardContent>

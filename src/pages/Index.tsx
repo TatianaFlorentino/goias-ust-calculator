@@ -166,6 +166,7 @@ const Index = () => {
           <Step4SquadComposition
             profiles={calculatorData.profiles}
             selectedProfileIds={selectedProfileIds}
+            projects={calculatorData.projects}
             squads={calculatorData.squads}
             onAddSquad={addSquadComposition}
             onUpdateSquad={updateSquadComposition}
