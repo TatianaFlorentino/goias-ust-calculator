@@ -6,7 +6,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Badge } from '@/components/ui/badge';
-import { Plus, Edit, X } from 'lucide-react';
+import { Plus, X } from 'lucide-react';
 import { ProfessionalProfile, SquadComposition } from '@/types/calculator';
 
 interface Step4SquadCompositionProps {
@@ -49,7 +49,6 @@ const Step4SquadComposition: React.FC<Step4SquadCompositionProps> = ({
     switch (type) {
       case 'projeto': return 'bg-blue-100 text-blue-800';
       case 'sustentacao': return 'bg-purple-100 text-purple-800';
-      case 'gestao': return 'bg-indigo-100 text-indigo-800';
       default: return 'bg-gray-100 text-gray-800';
     }
   };
@@ -73,22 +72,32 @@ const Step4SquadComposition: React.FC<Step4SquadCompositionProps> = ({
     return profile ? profile.fcp : 0;
   };
 
+  // Agrupar squads por tipo e complexidade
+  const groupedSquads = squads.reduce((groups, squad) => {
+    const key = squad.type === 'projeto' ? `${squad.type}-${squad.complexity}` : squad.type;
+    if (!groups[key]) {
+      groups[key] = [];
+    }
+    groups[key].push(squad);
+    return groups;
+  }, {} as Record<string, SquadComposition[]>);
+
   return (
     <Card className="w-full animate-fade-in">
-      <CardHeader className="text-center bg-gradient-to-r from-goias-green to-goias-dark-green text-white rounded-t-lg">
+      <CardHeader className="text-center bg-gradient-to-r from-emerald-600 to-emerald-700 text-white rounded-t-lg">
         <CardTitle className="text-2xl">Etapa 04 - Formato dos Squads</CardTitle>
         <CardDescription className="text-gray-100">
-          Defina a composição das equipes por tipo de atuação
+          Defina a composição das equipes por tipo de atuação e complexidade
         </CardDescription>
       </CardHeader>
       <CardContent className="space-y-6 p-6">
         <div className="flex justify-between items-center">
-          <h3 className="text-lg font-medium text-goias-green">
+          <h3 className="text-lg font-medium text-emerald-700">
             Composições de Squad ({squads.length})
           </h3>
           <Button
             onClick={() => setIsAddingSquad(true)}
-            className="bg-goias-green hover:bg-goias-dark-green"
+            className="bg-emerald-600 hover:bg-emerald-700"
           >
             <Plus className="w-4 h-4 mr-2" />
             Nova Composição
@@ -96,9 +105,9 @@ const Step4SquadComposition: React.FC<Step4SquadCompositionProps> = ({
         </div>
 
         {isAddingSquad && (
-          <Card className="border-goias-green/20">
+          <Card className="border-emerald-200">
             <CardHeader>
-              <CardTitle className="text-lg text-goias-green">Adicionar Composição de Squad</CardTitle>
+              <CardTitle className="text-lg text-emerald-700">Adicionar Composição de Squad</CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -108,7 +117,7 @@ const Step4SquadComposition: React.FC<Step4SquadCompositionProps> = ({
                     value={newSquad.profileId} 
                     onValueChange={(value) => setNewSquad({ ...newSquad, profileId: value })}
                   >
-                    <SelectTrigger className="border-goias-green/20 focus:border-goias-green">
+                    <SelectTrigger className="border-emerald-200 focus:border-emerald-600">
                       <SelectValue placeholder="Selecione um perfil" />
                     </SelectTrigger>
                     <SelectContent>
@@ -130,7 +139,7 @@ const Step4SquadComposition: React.FC<Step4SquadCompositionProps> = ({
                     placeholder="1"
                     value={newSquad.quantity}
                     onChange={(e) => setNewSquad({ ...newSquad, quantity: parseFloat(e.target.value) || 0 })}
-                    className="border-goias-green/20 focus:border-goias-green"
+                    className="border-emerald-200 focus:border-emerald-600"
                   />
                 </div>
 
@@ -140,13 +149,12 @@ const Step4SquadComposition: React.FC<Step4SquadCompositionProps> = ({
                     value={newSquad.type} 
                     onValueChange={(value: any) => setNewSquad({ ...newSquad, type: value })}
                   >
-                    <SelectTrigger className="border-goias-green/20 focus:border-goias-green">
+                    <SelectTrigger className="border-emerald-200 focus:border-emerald-600">
                       <SelectValue />
                     </SelectTrigger>
                     <SelectContent>
                       <SelectItem value="projeto">Projeto</SelectItem>
                       <SelectItem value="sustentacao">Sustentação</SelectItem>
-                      <SelectItem value="gestao">Gestão</SelectItem>
                     </SelectContent>
                   </Select>
                 </div>
@@ -158,7 +166,7 @@ const Step4SquadComposition: React.FC<Step4SquadCompositionProps> = ({
                       value={newSquad.complexity} 
                       onValueChange={(value: any) => setNewSquad({ ...newSquad, complexity: value })}
                     >
-                      <SelectTrigger className="border-goias-green/20 focus:border-goias-green">
+                      <SelectTrigger className="border-emerald-200 focus:border-emerald-600">
                         <SelectValue />
                       </SelectTrigger>
                       <SelectContent>
@@ -172,7 +180,7 @@ const Step4SquadComposition: React.FC<Step4SquadCompositionProps> = ({
               </div>
 
               <div className="flex gap-2">
-                <Button onClick={handleAddSquad} className="bg-goias-green hover:bg-goias-dark-green">
+                <Button onClick={handleAddSquad} className="bg-emerald-600 hover:bg-emerald-700">
                   Adicionar
                 </Button>
                 <Button variant="outline" onClick={() => setIsAddingSquad(false)}>
@@ -183,52 +191,66 @@ const Step4SquadComposition: React.FC<Step4SquadCompositionProps> = ({
           </Card>
         )}
 
-        <div className="space-y-4">
-          {squads.map((squad) => (
-            <Card key={squad.id} className="border-goias-green/20">
-              <CardContent className="p-4">
-                <div className="flex justify-between items-start">
-                  <div className="flex-1">
-                    <h4 className="font-medium text-goias-dark-green mb-2">
-                      {getProfileName(squad.profileId)}
-                    </h4>
-                    <div className="flex flex-wrap gap-2 mb-2">
-                      <Badge className={getTypeColor(squad.type)}>
-                        {squad.type.charAt(0).toUpperCase() + squad.type.slice(1)}
-                      </Badge>
-                      {squad.complexity && (
-                        <Badge className={getComplexityColor(squad.complexity)}>
-                          {squad.complexity.charAt(0).toUpperCase() + squad.complexity.slice(1)}
-                        </Badge>
-                      )}
-                    </div>
-                    <div className="grid grid-cols-2 md:grid-cols-3 gap-4 text-sm">
-                      <div>
-                        <span className="text-gray-600">Quantidade:</span>
-                        <p className="font-medium">{squad.quantity}</p>
-                      </div>
-                      <div>
-                        <span className="text-gray-600">FCP:</span>
-                        <p className="font-medium">{getProfileFCP(squad.profileId)}</p>
-                      </div>
-                      <div>
-                        <span className="text-gray-600">UST/Semana:</span>
-                        <p className="font-medium">{(squad.quantity * getProfileFCP(squad.profileId) * 40).toFixed(0)}</p>
-                      </div>
+        {/* Exibir squads agrupados */}
+        <div className="space-y-6">
+          {Object.entries(groupedSquads).map(([groupKey, groupSquads]) => {
+            const [type, complexity] = groupKey.split('-');
+            const groupTitle = complexity 
+              ? `${type.charAt(0).toUpperCase() + type.slice(1)} - Complexidade ${complexity.charAt(0).toUpperCase() + complexity.slice(1)}`
+              : type.charAt(0).toUpperCase() + type.slice(1);
+
+            const totalUST = groupSquads.reduce((sum, squad) => {
+              return sum + (squad.quantity * getProfileFCP(squad.profileId) * 40);
+            }, 0);
+
+            return (
+              <Card key={groupKey} className="border-emerald-200">
+                <CardHeader className="bg-emerald-50">
+                  <div className="flex justify-between items-center">
+                    <CardTitle className="text-lg text-emerald-800">{groupTitle}</CardTitle>
+                    <div className="text-sm text-emerald-700">
+                      Total UST/Semana: <span className="font-bold">{totalUST.toFixed(0)}</span>
                     </div>
                   </div>
-                  <Button
-                    size="sm"
-                    variant="ghost"
-                    onClick={() => onDeleteSquad(squad.id)}
-                    className="text-red-600 hover:text-red-800"
-                  >
-                    <X className="w-4 h-4" />
-                  </Button>
-                </div>
-              </CardContent>
-            </Card>
-          ))}
+                </CardHeader>
+                <CardContent className="p-4">
+                  <div className="space-y-3">
+                    {groupSquads.map((squad) => (
+                      <div key={squad.id} className="flex items-center justify-between p-3 border border-emerald-100 rounded-lg bg-white">
+                        <div className="flex-1">
+                          <h4 className="font-medium text-emerald-800 mb-1">
+                            {getProfileName(squad.profileId)}
+                          </h4>
+                          <div className="grid grid-cols-3 gap-4 text-sm">
+                            <div>
+                              <span className="text-gray-600">Quantidade:</span>
+                              <p className="font-medium">{squad.quantity}</p>
+                            </div>
+                            <div>
+                              <span className="text-gray-600">FCP:</span>
+                              <p className="font-medium">{getProfileFCP(squad.profileId)}</p>
+                            </div>
+                            <div>
+                              <span className="text-gray-600">UST/Semana:</span>
+                              <p className="font-medium">{(squad.quantity * getProfileFCP(squad.profileId) * 40).toFixed(0)}</p>
+                            </div>
+                          </div>
+                        </div>
+                        <Button
+                          size="sm"
+                          variant="ghost"
+                          onClick={() => onDeleteSquad(squad.id)}
+                          className="text-red-600 hover:text-red-800"
+                        >
+                          <X className="w-4 h-4" />
+                        </Button>
+                      </div>
+                    ))}
+                  </div>
+                </CardContent>
+              </Card>
+            );
+          })}
         </div>
 
         {squads.length === 0 && (
@@ -238,10 +260,10 @@ const Step4SquadComposition: React.FC<Step4SquadCompositionProps> = ({
           </div>
         )}
 
-        <div className="bg-goias-light-green/20 p-4 rounded-lg border border-goias-green/20">
-          <p className="text-sm text-goias-dark-green">
-            <strong>Dica:</strong> Você pode aplicar composições padrão da CACTIC ou 
-            personalizar conforme as necessidades específicas do órgão.
+        <div className="bg-emerald-50 p-4 rounded-lg border border-emerald-200">
+          <p className="text-sm text-emerald-800">
+            <strong>Dica:</strong> Você pode cadastrar múltiplos perfis para simular 
+            todos os tipos necessários para entregar um projeto completo.
           </p>
         </div>
       </CardContent>

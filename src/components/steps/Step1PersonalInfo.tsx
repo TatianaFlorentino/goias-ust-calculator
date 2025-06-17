@@ -25,14 +25,13 @@ const organs = [
   'Secretaria de Estado de Desenvolvimento e Inovação',
   'Secretaria de Estado da Cidadania',
   'Secretaria de Estado da Cultura',
-  'Secretaria de Estado do Esporte e Lazer',
-  'Outro'
+  'Secretaria de Estado do Esporte e Lazer'
 ];
 
 const Step1PersonalInfo: React.FC<Step1PersonalInfoProps> = ({ data, onChange }) => {
   return (
     <Card className="w-full animate-fade-in">
-      <CardHeader className="text-center bg-gradient-to-r from-goias-green to-goias-dark-green text-white rounded-t-lg">
+      <CardHeader className="text-center bg-gradient-to-r from-emerald-600 to-emerald-700 text-white rounded-t-lg">
         <CardTitle className="text-2xl">Etapa 01 - Informações Pessoais</CardTitle>
         <CardDescription className="text-gray-100">
           Identifique o responsável pelo preenchimento e o órgão de origem
@@ -40,7 +39,7 @@ const Step1PersonalInfo: React.FC<Step1PersonalInfoProps> = ({ data, onChange })
       </CardHeader>
       <CardContent className="space-y-6 p-6">
         <div className="space-y-2">
-          <Label htmlFor="name" className="text-base font-medium text-goias-green">
+          <Label htmlFor="name" className="text-base font-medium text-emerald-700">
             Nome Completo *
           </Label>
           <Input
@@ -49,12 +48,12 @@ const Step1PersonalInfo: React.FC<Step1PersonalInfoProps> = ({ data, onChange })
             placeholder="Digite seu nome completo"
             value={data.name}
             onChange={(e) => onChange({ name: e.target.value })}
-            className="border-goias-green/20 focus:border-goias-green"
+            className="border-emerald-200 focus:border-emerald-600"
           />
         </div>
 
         <div className="space-y-2">
-          <Label htmlFor="email" className="text-base font-medium text-goias-green">
+          <Label htmlFor="email" className="text-base font-medium text-emerald-700">
             E-mail Institucional *
           </Label>
           <Input
@@ -63,16 +62,16 @@ const Step1PersonalInfo: React.FC<Step1PersonalInfoProps> = ({ data, onChange })
             placeholder="nome@go.gov.br"
             value={data.email}
             onChange={(e) => onChange({ email: e.target.value })}
-            className="border-goias-green/20 focus:border-goias-green"
+            className="border-emerald-200 focus:border-emerald-600"
           />
         </div>
 
         <div className="space-y-2">
-          <Label htmlFor="organ" className="text-base font-medium text-goias-green">
-            Órgão/Unidade Administrativa *
+          <Label htmlFor="organ" className="text-base font-medium text-emerald-700">
+            Órgão do Estado de Goiás *
           </Label>
           <Select value={data.organ} onValueChange={(value) => onChange({ organ: value })}>
-            <SelectTrigger className="border-goias-green/20 focus:border-goias-green">
+            <SelectTrigger className="border-emerald-200 focus:border-emerald-600">
               <SelectValue placeholder="Selecione o órgão" />
             </SelectTrigger>
             <SelectContent>
@@ -85,8 +84,8 @@ const Step1PersonalInfo: React.FC<Step1PersonalInfoProps> = ({ data, onChange })
           </Select>
         </div>
 
-        <div className="bg-goias-light-green/20 p-4 rounded-lg border border-goias-green/20">
-          <p className="text-sm text-goias-dark-green">
+        <div className="bg-emerald-50 p-4 rounded-lg border border-emerald-200">
+          <p className="text-sm text-emerald-800">
             <strong>Importante:</strong> Todas as informações fornecidas serão utilizadas 
             exclusivamente para fins de cálculo e controle interno da SGG/GO.
           </p>

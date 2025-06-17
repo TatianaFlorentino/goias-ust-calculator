@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Button } from '@/components/ui/button';
 import Header from '@/components/Header';
@@ -110,7 +109,11 @@ const Index = () => {
         return (
           <Step2GeneralParams
             data={calculatorData.generalParams}
+            profiles={calculatorData.profiles}
             onChange={updateGeneralParams}
+            onAddProfile={addProfile}
+            onUpdateProfile={updateProfile}
+            onDeleteProfile={deleteProfile}
           />
         );
       case 3:
@@ -165,7 +168,7 @@ const Index = () => {
             variant="outline"
             onClick={handleBack}
             disabled={currentStep === 1}
-            className="border-goias-green text-goias-green hover:bg-goias-light-green/20"
+            className="border-emerald-600 text-emerald-600 hover:bg-emerald-50"
           >
             Voltar
           </Button>
@@ -173,7 +176,7 @@ const Index = () => {
           {currentStep < 5 ? (
             <Button
               onClick={handleNext}
-              className="bg-goias-green hover:bg-goias-dark-green"
+              className="bg-emerald-600 hover:bg-emerald-700"
             >
               Próximo
             </Button>
@@ -182,7 +185,7 @@ const Index = () => {
               <Button
                 variant="outline"
                 onClick={() => setCurrentStep(1)}
-                className="border-goias-green text-goias-green hover:bg-goias-light-green/20"
+                className="border-emerald-600 text-emerald-600 hover:bg-emerald-50"
               >
                 Nova Simulação
               </Button>
@@ -191,7 +194,7 @@ const Index = () => {
         </div>
       </div>
 
-      <footer className="bg-goias-green text-white py-4 mt-12">
+      <footer className="bg-emerald-600 text-white py-4 mt-12">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center">
             <p className="text-sm">

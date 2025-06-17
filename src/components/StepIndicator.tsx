@@ -27,9 +27,9 @@ const StepIndicator: React.FC<StepIndicatorProps> = ({
                 <div
                   className={`flex items-center justify-center w-10 h-10 rounded-full border-2 ${
                     isCompleted
-                      ? 'bg-goias-green border-goias-green text-white'
+                      ? 'bg-emerald-600 border-emerald-600 text-white'
                       : isCurrent
-                      ? 'border-goias-green text-goias-green bg-white'
+                      ? 'border-emerald-600 text-emerald-600 bg-white'
                       : 'border-gray-300 text-gray-300 bg-white'
                   }`}
                 >
@@ -42,7 +42,7 @@ const StepIndicator: React.FC<StepIndicatorProps> = ({
                 {stepNumber < totalSteps && (
                   <div
                     className={`flex-1 h-0.5 mx-2 ${
-                      isCompleted ? 'bg-goias-green' : 'bg-gray-300'
+                      isCompleted ? 'bg-emerald-600' : 'bg-gray-300'
                     }`}
                   />
                 )}
@@ -50,8 +50,8 @@ const StepIndicator: React.FC<StepIndicatorProps> = ({
               <div className="mt-2 text-center">
                 <div
                   className={`text-sm font-medium ${
-                    isCurrent ? 'text-goias-green' : 
-                    isCompleted ? 'text-goias-green' : 'text-gray-500'
+                    isCurrent ? 'text-emerald-600' : 
+                    isCompleted ? 'text-emerald-600' : 'text-gray-500'
                   }`}
                 >
                   {stepNames[index]}

@@ -17,7 +17,7 @@
     --popover-foreground: 222.2 84% 4.9%;
 
     /* Verde institucional de Goiás */
-    --primary: 140 60% 35%;
+    --primary: 158 64% 52%;
     --primary-foreground: 0 0% 98%;
 
     --secondary: 210 40% 96.1%;
@@ -34,15 +34,15 @@
 
     --border: 214.3 31.8% 91.4%;
     --input: 214.3 31.8% 91.4%;
-    --ring: 140 60% 35%;
+    --ring: 158 64% 52%;
 
     --radius: 0.5rem;
 
     /* Cores customizadas do Estado de Goiás */
-    --goias-green: 140 60% 35%;
+    --goias-green: 158 64% 52%;
     --goias-gold: 43 96% 56%;
-    --goias-dark-green: 140 70% 25%;
-    --goias-light-green: 140 40% 85%;
+    --goias-dark-green: 158 64% 42%;
+    --goias-light-green: 158 64% 92%;
   }
 
   .dark {
@@ -52,7 +52,7 @@
     --card-foreground: 210 40% 98%;
     --popover: 222.2 84% 4.9%;
     --popover-foreground: 210 40% 98%;
-    --primary: 140 60% 45%;
+    --primary: 158 64% 62%;
     --primary-foreground: 222.2 47.4% 11.2%;
     --secondary: 217.2 32.6% 17.5%;
     --secondary-foreground: 210 40% 98%;
@@ -64,7 +64,7 @@
     --destructive-foreground: 210 40% 98%;
     --border: 217.2 32.6% 17.5%;
     --input: 217.2 32.6% 17.5%;
-    --ring: 140 60% 45%;
+    --ring: 158 64% 62%;
   }
 }
 
