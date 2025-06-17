@@ -5,7 +5,6 @@ import { Button } from '@/components/ui/button';
 import { Plus } from 'lucide-react';
 import { ProfessionalProfile, SquadComposition, Project } from '@/types/calculator';
 import SquadFormModal from './squad-composition/SquadFormModal';
-import ProfileSummaryCards from './squad-composition/ProfileSummaryCards';
 import SquadGroupCard from './squad-composition/SquadGroupCard';
 
 interface Step4SquadCompositionProps {
@@ -87,11 +86,6 @@ const Step4SquadComposition: React.FC<Step4SquadCompositionProps> = ({
         </CardDescription>
       </CardHeader>
       <CardContent className="space-y-6 p-6">
-        <ProfileSummaryCards 
-          availableProfiles={availableProfiles} 
-          projects={projects} 
-        />
-
         <div className="flex justify-between items-center">
           <h3 className="text-lg font-medium text-emerald-700">
             Composições de Squad ({squads.length})
