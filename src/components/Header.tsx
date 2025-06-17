@@ -8,14 +8,11 @@ const Header = () => {
         <div className="flex items-center justify-between h-20">
           <div className="flex items-center space-x-6">
             <div className="flex items-center space-x-4">
-              <div className="w-16 h-16 flex items-center justify-center bg-emerald-50 rounded-lg border-2 border-emerald-200">
+              <div className="w-16 h-16 flex items-center justify-center">
                 <img 
-                  src="/lovable-uploads/a41d1a68-3c77-487b-8f15-cf0463297315.png" 
+                  src="/lovable-uploads/6a3debe7-f977-47ea-b20d-c518c74ca15e.png" 
                   alt="SGG/GO" 
-                  className="w-12 h-12 object-contain"
-                  style={{
-                    filter: 'invert(34%) sepia(64%) saturate(1534%) hue-rotate(120deg) brightness(94%) contrast(91%)'
-                  }}
+                  className="w-14 h-14 object-contain"
                 />
               </div>
               <div className="border-l-2 border-emerald-200 pl-4">
