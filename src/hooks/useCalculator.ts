@@ -50,6 +50,7 @@ export const useCalculator = () => {
     squads: []
   });
 
+  const [selectedProfileIds, setSelectedProfileIds] = useState<string[]>([]);
   const [currentStep, setCurrentStep] = useState(1);
 
   const updatePersonalInfo = (info: Partial<CalculatorData['personalInfo']>) => {
@@ -246,10 +247,30 @@ export const useCalculator = () => {
     });
   };
 
+  const toggleProfileSelection = (profileId: string) => {
+    setSelectedProfileIds(prev => 
+      prev.includes(profileId) 
+        ? prev.filter(id => id !== profileId)
+        : [...prev, profileId]
+    );
+  };
+
+  const selectAllProfiles = () => {
+    setSelectedProfileIds(calculatorData.profiles.map(p => p.id));
+  };
+
+  const deselectAllProfiles = () => {
+    setSelectedProfileIds([]);
+  };
+
   return {
     calculatorData,
     currentStep,
     setCurrentStep,
+    selectedProfileIds,
+    toggleProfileSelection,
+    selectAllProfiles,
+    deselectAllProfiles,
     updatePersonalInfo,
     updateGeneralParams,
     addProfile,

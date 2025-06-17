@@ -11,6 +11,7 @@ import { ProfessionalProfile, SquadComposition } from '@/types/calculator';
 
 interface Step4SquadCompositionProps {
   profiles: ProfessionalProfile[];
+  selectedProfileIds: string[];
   squads: SquadComposition[];
   onAddSquad: (squad: Omit<SquadComposition, 'id'>) => void;
   onUpdateSquad: (id: string, squad: Partial<SquadComposition>) => void;
@@ -19,6 +20,7 @@ interface Step4SquadCompositionProps {
 
 const Step4SquadComposition: React.FC<Step4SquadCompositionProps> = ({
   profiles,
+  selectedProfileIds,
   squads,
   onAddSquad,
   onUpdateSquad,
@@ -31,6 +33,9 @@ const Step4SquadComposition: React.FC<Step4SquadCompositionProps> = ({
     type: 'projeto',
     complexity: 'baixa'
   });
+
+  // Filtrar apenas os perfis selecionados
+  const availableProfiles = profiles.filter(profile => selectedProfileIds.includes(profile.id));
 
   const handleAddSquad = () => {
     if (newSquad.profileId) {
@@ -82,10 +87,36 @@ const Step4SquadComposition: React.FC<Step4SquadCompositionProps> = ({
     return groups;
   }, {} as Record<string, SquadComposition[]>);
 
+  if (availableProfiles.length === 0) {
+    return (
+      <Card className="w-full animate-fade-in">
+        <CardHeader className="text-center bg-gradient-to-r from-emerald-600 to-emerald-700 text-white rounded-t-lg">
+          <CardTitle className="text-2xl">Etapa 05 - Formato dos Squads</CardTitle>
+          <CardDescription className="text-gray-100">
+            Defina a composição das equipes por tipo de atuação e complexidade
+          </CardDescription>
+        </CardHeader>
+        <CardContent className="p-6">
+          <div className="text-center py-8">
+            <div className="bg-amber-50 p-6 rounded-lg border border-amber-200">
+              <h3 className="text-lg font-medium text-amber-800 mb-2">
+                Nenhum perfil selecionado
+              </h3>
+              <p className="text-amber-700">
+                Volte para a etapa anterior (Parâmetros Gerais) e selecione os perfis 
+                que devem estar disponíveis para composição de squads.
+              </p>
+            </div>
+          </div>
+        </CardContent>
+      </Card>
+    );
+  }
+
   return (
     <Card className="w-full animate-fade-in">
       <CardHeader className="text-center bg-gradient-to-r from-emerald-600 to-emerald-700 text-white rounded-t-lg">
-        <CardTitle className="text-2xl">Etapa 04 - Formato dos Squads</CardTitle>
+        <CardTitle className="text-2xl">Etapa 05 - Formato dos Squads</CardTitle>
         <CardDescription className="text-gray-100">
           Defina a composição das equipes por tipo de atuação e complexidade
         </CardDescription>
@@ -93,7 +124,7 @@ const Step4SquadComposition: React.FC<Step4SquadCompositionProps> = ({
       <CardContent className="space-y-6 p-6">
         <div className="flex justify-between items-center">
           <h3 className="text-lg font-medium text-emerald-700">
-            Composições de Squad ({squads.length})
+            Composições de Squad ({squads.length}) - {availableProfiles.length} perfis disponíveis
           </h3>
           <Button
             onClick={() => setIsAddingSquad(true)}
@@ -121,7 +152,7 @@ const Step4SquadComposition: React.FC<Step4SquadCompositionProps> = ({
                       <SelectValue placeholder="Selecione um perfil" />
                     </SelectTrigger>
                     <SelectContent>
-                      {profiles.map((profile) => (
+                      {availableProfiles.map((profile) => (
                         <SelectItem key={profile.id} value={profile.id}>
                           {profile.name} (FCP: {profile.fcp})
                         </SelectItem>
