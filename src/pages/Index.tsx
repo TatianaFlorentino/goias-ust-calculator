@@ -8,6 +8,7 @@ import Step3GeneralParams from '@/components/steps/Step3GeneralParams';
 import Step3Projects from '@/components/steps/Step3Projects';
 import Step4SquadComposition from '@/components/steps/Step4SquadComposition';
 import Step5Summary from '@/components/steps/Step5Summary';
+import OnboardingTrigger from '@/components/onboarding/OnboardingTrigger';
 import { useCalculator } from '@/hooks/useCalculator';
 import { useToast } from '@/hooks/use-toast';
 
@@ -191,6 +192,11 @@ const Index = () => {
       <Header />
       
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <div className="flex justify-between items-center mb-6">
+          <div></div>
+          <OnboardingTrigger />
+        </div>
+
         <StepIndicator
           currentStep={currentStep}
           totalSteps={6}
