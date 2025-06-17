@@ -5,31 +5,40 @@ const Header = () => {
   return (
     <header className="bg-white shadow-sm border-b-2 border-emerald-600">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex items-center justify-between h-16">
-          <div className="flex items-center space-x-4">
-            <div className="w-12 h-12 flex items-center justify-center">
-              <img 
-                src="/lovable-uploads/a41d1a68-3c77-487b-8f15-cf0463297315.png" 
-                alt="SGG/GO" 
-                className="w-12 h-12 object-contain filter brightness-0 saturate-100"
-                style={{
-                  filter: 'invert(34%) sepia(64%) saturate(1534%) hue-rotate(120deg) brightness(94%) contrast(91%)'
-                }}
-              />
-            </div>
-            <div>
-              <h1 className="text-xl font-bold text-emerald-700">
-                Calculadora UST - SGG/GO
-              </h1>
-              <p className="text-sm text-gray-600">
-                Secretaria-Geral de Governo de Goiás
-              </p>
+        <div className="flex items-center justify-between h-20">
+          <div className="flex items-center space-x-6">
+            <div className="flex items-center space-x-4">
+              <div className="w-16 h-16 flex items-center justify-center bg-emerald-50 rounded-lg border-2 border-emerald-200">
+                <img 
+                  src="/lovable-uploads/a41d1a68-3c77-487b-8f15-cf0463297315.png" 
+                  alt="SGG/GO" 
+                  className="w-12 h-12 object-contain"
+                  style={{
+                    filter: 'invert(34%) sepia(64%) saturate(1534%) hue-rotate(120deg) brightness(94%) contrast(91%)'
+                  }}
+                />
+              </div>
+              <div className="border-l-2 border-emerald-200 pl-4">
+                <h1 className="text-2xl font-bold text-emerald-700">
+                  Calculadora UST
+                </h1>
+                <p className="text-sm text-emerald-600 font-medium">
+                  Secretaria-Geral de Governo de Goiás
+                </p>
+              </div>
             </div>
           </div>
           <div className="text-right">
-            <div className="text-sm text-gray-600">Sistema Interno</div>
-            <div className="text-xs text-amber-600 font-medium">
-              Unidades de Serviço Técnico
+            <div className="flex items-center space-x-3">
+              <div>
+                <div className="text-sm font-medium text-emerald-700">Sistema Interno</div>
+                <div className="text-xs text-amber-600 font-medium">
+                  Unidades de Serviço Técnico
+                </div>
+              </div>
+              <div className="w-8 h-8 bg-emerald-100 rounded-full flex items-center justify-center">
+                <div className="w-4 h-4 bg-emerald-600 rounded-full"></div>
+              </div>
             </div>
           </div>
         </div>
