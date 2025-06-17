@@ -95,30 +95,67 @@ const Step4SquadComposition: React.FC<Step4SquadCompositionProps> = ({
     );
   }
 
+  if (projects.length === 0) {
+    return (
+      <Card className="w-full animate-fade-in">
+        <CardHeader className="text-center bg-gradient-to-r from-emerald-600 to-emerald-700 text-white rounded-t-lg">
+          <CardTitle className="text-2xl">Etapa 05 - Formato dos Squads</CardTitle>
+          <CardDescription className="text-gray-100">
+            Defina a composição das equipes por tipo de atuação e complexidade
+          </CardDescription>
+        </CardHeader>
+        <CardContent className="p-6">
+          <div className="text-center py-8">
+            <div className="bg-amber-50 p-6 rounded-lg border border-amber-200">
+              <h3 className="text-lg font-medium text-amber-800 mb-2">
+                Nenhum projeto cadastrado
+              </h3>
+              <p className="text-amber-700">
+                Volte para a etapa anterior (Cadastro de Projetos) e cadastre pelo menos 
+                um projeto para poder definir a composição dos squads.
+              </p>
+            </div>
+          </div>
+        </CardContent>
+      </Card>
+    );
+  }
+
   return (
     <Card className="w-full animate-fade-in">
       <CardHeader className="text-center bg-gradient-to-r from-emerald-600 to-emerald-700 text-white rounded-t-lg">
         <CardTitle className="text-2xl">Etapa 05 - Formato dos Squads</CardTitle>
         <CardDescription className="text-gray-100">
-          Defina a composição das equipes por tipo de atuação e complexidade
+          Defina a composição das equipes para cada projeto cadastrado
         </CardDescription>
       </CardHeader>
       <CardContent className="space-y-6 p-6">
-        {/* Lista de Projetos Cadastrados */}
+        {/* Lista de Projetos Cadastrados para Seleção */}
         <div className="bg-blue-50 p-4 rounded-lg border border-blue-200">
           <h3 className="text-lg font-medium text-blue-800 mb-3">
-            Projetos Cadastrados ({projects.length})
+            Projetos Disponíveis para Composição de Squad ({projects.length})
           </h3>
+          <p className="text-sm text-blue-700 mb-3">
+            Selecione um projeto abaixo para definir sua composição de squad:
+          </p>
           {projects.length > 0 ? (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
               {projects.map((project) => (
-                <div key={project.id} className="bg-white p-3 rounded-md border border-blue-100">
+                <div key={project.id} className="bg-white p-3 rounded-md border border-blue-100 hover:shadow-md transition-shadow">
                   <h4 className="font-medium text-blue-900 mb-2">{project.name}</h4>
-                  <div className="text-sm text-blue-700 space-y-1">
+                  <div className="text-sm text-blue-700 space-y-1 mb-3">
                     <div><strong>Tipo:</strong> {getTypeLabel(project.type)}</div>
                     <div><strong>Complexidade:</strong> {getComplexityLabel(project.complexity)}</div>
                     <div><strong>Duração:</strong> {project.duration} semanas</div>
                   </div>
+                  <Button
+                    size="sm"
+                    onClick={() => setIsAddingSquad(true)}
+                    className="w-full bg-blue-600 hover:bg-blue-700"
+                  >
+                    <Plus className="w-3 h-3 mr-1" />
+                    Criar Squad
+                  </Button>
                 </div>
               ))}
             </div>
@@ -129,20 +166,14 @@ const Step4SquadComposition: React.FC<Step4SquadCompositionProps> = ({
 
         <div className="flex justify-between items-center">
           <h3 className="text-lg font-medium text-emerald-700">
-            Composições de Squad ({squads.length})
+            Composições de Squad Criadas ({squads.length})
           </h3>
-          <Button
-            onClick={() => setIsAddingSquad(true)}
-            className="bg-emerald-600 hover:bg-emerald-700"
-          >
-            <Plus className="w-4 h-4 mr-2" />
-            Nova Composição
-          </Button>
         </div>
 
         {isAddingSquad && (
           <SquadFormModal
             availableProfiles={availableProfiles}
+            availableProjects={projects}
             onAddSquad={onAddSquad}
             onCancel={() => setIsAddingSquad(false)}
           />
@@ -163,15 +194,16 @@ const Step4SquadComposition: React.FC<Step4SquadCompositionProps> = ({
 
         {squads.length === 0 && (
           <div className="text-center py-8 text-gray-500">
-            <p>Nenhuma composição de squad cadastrada ainda.</p>
-            <p className="text-sm">Clique em "Nova Composição" para começar.</p>
+            <p>Nenhuma composição de squad criada ainda.</p>
+            <p className="text-sm">Selecione um projeto acima e clique em "Criar Squad" para começar.</p>
           </div>
         )}
 
         <div className="bg-emerald-50 p-4 rounded-lg border border-emerald-200">
           <p className="text-sm text-emerald-800">
-            <strong>Dica:</strong> As composições de squad são automaticamente associadas aos projetos 
-            cadastrados do mesmo tipo e complexidade para o cálculo final.
+            <strong>Dica:</strong> Cada projeto pode ter múltiplas composições de squad. 
+            As composições são automaticamente associadas aos projetos do mesmo tipo e complexidade 
+            para o cálculo final.
           </p>
         </div>
       </CardContent>
