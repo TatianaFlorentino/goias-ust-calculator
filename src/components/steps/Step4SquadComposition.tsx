@@ -51,6 +51,24 @@ const Step4SquadComposition: React.FC<Step4SquadCompositionProps> = ({
     return groups;
   }, {} as Record<string, Project[]>);
 
+  const getTypeLabel = (type: string) => {
+    switch (type) {
+      case 'projeto': return 'Projeto';
+      case 'sustentacao': return 'Sustentação';
+      case 'gestao': return 'Gestão';
+      default: return type;
+    }
+  };
+
+  const getComplexityLabel = (complexity: string) => {
+    switch (complexity) {
+      case 'baixa': return 'Baixa';
+      case 'media': return 'Média';
+      case 'alta': return 'Alta';
+      default: return complexity;
+    }
+  };
+
   if (availableProfiles.length === 0) {
     return (
       <Card className="w-full animate-fade-in">
@@ -86,6 +104,29 @@ const Step4SquadComposition: React.FC<Step4SquadCompositionProps> = ({
         </CardDescription>
       </CardHeader>
       <CardContent className="space-y-6 p-6">
+        {/* Lista de Projetos Cadastrados */}
+        <div className="bg-blue-50 p-4 rounded-lg border border-blue-200">
+          <h3 className="text-lg font-medium text-blue-800 mb-3">
+            Projetos Cadastrados ({projects.length})
+          </h3>
+          {projects.length > 0 ? (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
+              {projects.map((project) => (
+                <div key={project.id} className="bg-white p-3 rounded-md border border-blue-100">
+                  <h4 className="font-medium text-blue-900 mb-2">{project.name}</h4>
+                  <div className="text-sm text-blue-700 space-y-1">
+                    <div><strong>Tipo:</strong> {getTypeLabel(project.type)}</div>
+                    <div><strong>Complexidade:</strong> {getComplexityLabel(project.complexity)}</div>
+                    <div><strong>Duração:</strong> {project.duration} semanas</div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          ) : (
+            <p className="text-blue-700">Nenhum projeto cadastrado ainda.</p>
+          )}
+        </div>
+
         <div className="flex justify-between items-center">
           <h3 className="text-lg font-medium text-emerald-700">
             Composições de Squad ({squads.length})
