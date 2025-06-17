@@ -11,7 +11,10 @@ const Header = () => {
               <img 
                 src="/lovable-uploads/a41d1a68-3c77-487b-8f15-cf0463297315.png" 
                 alt="SGG/GO" 
-                className="w-12 h-12 object-contain"
+                className="w-12 h-12 object-contain filter brightness-0 saturate-100"
+                style={{
+                  filter: 'invert(34%) sepia(64%) saturate(1534%) hue-rotate(120deg) brightness(94%) contrast(91%)'
+                }}
               />
             </div>
             <div>

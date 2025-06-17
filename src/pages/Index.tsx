@@ -1,9 +1,11 @@
+
 import React from 'react';
 import { Button } from '@/components/ui/button';
 import Header from '@/components/Header';
 import StepIndicator from '@/components/StepIndicator';
 import Step1PersonalInfo from '@/components/steps/Step1PersonalInfo';
-import Step2GeneralParams from '@/components/steps/Step2GeneralParams';
+import Step2ProfileFCP from '@/components/steps/Step2ProfileFCP';
+import Step3GeneralParams from '@/components/steps/Step3GeneralParams';
 import Step3Projects from '@/components/steps/Step3Projects';
 import Step4SquadComposition from '@/components/steps/Step4SquadComposition';
 import Step5Summary from '@/components/steps/Step5Summary';
@@ -12,6 +14,7 @@ import { useToast } from '@/hooks/use-toast';
 
 const stepNames = [
   'Informações Pessoais',
+  'Cadastro de Perfis FCP',
   'Parâmetros Gerais',
   'Cadastro de Projetos',
   'Formato dos Squads',
@@ -53,6 +56,17 @@ const Index = () => {
     }
 
     if (currentStep === 2) {
+      if (calculatorData.profiles.length === 0) {
+        toast({
+          title: "Perfis necessários",
+          description: "Cadastre pelo menos um perfil FCP antes de continuar.",
+          variant: "destructive"
+        });
+        return;
+      }
+    }
+
+    if (currentStep === 3) {
       if (!calculatorData.generalParams.ustValue || !calculatorData.generalParams.contractDuration || !calculatorData.generalParams.weeklyHours) {
         toast({
           title: "Parâmetros incompletos",
@@ -63,7 +77,7 @@ const Index = () => {
       }
     }
 
-    if (currentStep === 3) {
+    if (currentStep === 4) {
       if (calculatorData.projects.length === 0) {
         toast({
           title: "Projetos necessários",
@@ -74,7 +88,7 @@ const Index = () => {
       }
     }
 
-    if (currentStep === 4) {
+    if (currentStep === 5) {
       if (calculatorData.squads.length === 0) {
         toast({
           title: "Composições necessárias",
@@ -85,7 +99,7 @@ const Index = () => {
       }
     }
 
-    if (currentStep < 5) {
+    if (currentStep < 6) {
       setCurrentStep(currentStep + 1);
     }
   };
@@ -107,16 +121,21 @@ const Index = () => {
         );
       case 2:
         return (
-          <Step2GeneralParams
-            data={calculatorData.generalParams}
+          <Step2ProfileFCP
             profiles={calculatorData.profiles}
-            onChange={updateGeneralParams}
             onAddProfile={addProfile}
             onUpdateProfile={updateProfile}
             onDeleteProfile={deleteProfile}
           />
         );
       case 3:
+        return (
+          <Step3GeneralParams
+            data={calculatorData.generalParams}
+            onChange={updateGeneralParams}
+          />
+        );
+      case 4:
         return (
           <Step3Projects
             projects={calculatorData.projects}
@@ -125,7 +144,7 @@ const Index = () => {
             onDeleteProject={deleteProject}
           />
         );
-      case 4:
+      case 5:
         return (
           <Step4SquadComposition
             profiles={calculatorData.profiles}
@@ -135,7 +154,7 @@ const Index = () => {
             onDeleteSquad={deleteSquadComposition}
           />
         );
-      case 5:
+      case 6:
         return (
           <Step5Summary
             results={calculateResults()}
@@ -155,7 +174,7 @@ const Index = () => {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <StepIndicator
           currentStep={currentStep}
-          totalSteps={5}
+          totalSteps={6}
           stepNames={stepNames}
         />
 
@@ -173,7 +192,7 @@ const Index = () => {
             Voltar
           </Button>
 
-          {currentStep < 5 ? (
+          {currentStep < 6 ? (
             <Button
               onClick={handleNext}
               className="bg-emerald-600 hover:bg-emerald-700"

@@ -38,7 +38,7 @@ export const useCalculator = () => {
     personalInfo: {
       name: '',
       email: '',
-      organ: 'GEINOVA'
+      organ: ''
     },
     generalParams: {
       ustValue: 70,

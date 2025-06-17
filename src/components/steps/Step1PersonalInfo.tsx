@@ -12,7 +12,6 @@ interface Step1PersonalInfoProps {
 }
 
 const organs = [
-  'GEINOVA',
   'Casa Civil',
   'Secretaria de Estado da Economia',
   'Secretaria de Estado da Educação',
