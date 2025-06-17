@@ -9,8 +9,8 @@ const Header = () => {
           <div className="flex items-center space-x-4">
             <div className="w-12 h-12 flex items-center justify-center">
               <img 
-                src="https://upload.wikimedia.org/wikipedia/commons/thumb/b/be/Bras%C3%A3o_de_Goi%C3%A1s.svg/1200px-Bras%C3%A3o_de_Goi%C3%A1s.svg.png" 
-                alt="Brasão de Goiás" 
+                src="/lovable-uploads/a41d1a68-3c77-487b-8f15-cf0463297315.png" 
+                alt="SGG/GO" 
                 className="w-12 h-12 object-contain"
               />
             </div>

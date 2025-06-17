@@ -1,4 +1,3 @@
-
 import { useState } from 'react';
 import { CalculatorData, ProfessionalProfile, Project, SquadComposition, CalculationResult } from '@/types/calculator';
 
@@ -20,11 +19,11 @@ const defaultProfiles: ProfessionalProfile[] = [
   { id: '15', name: 'Scrum Master/Agilista Sênior', fcp: 3.0, type: 'projeto' },
   { id: '16', name: 'Gerente de Projetos de TIC Pleno', fcp: 2.1, type: 'projeto' },
   { id: '17', name: 'Gerente de Projetos de TIC Sênior', fcp: 3.2, type: 'projeto' },
-  { id: '18', name: 'Líder de Equipe Pleno', fcp: 2.1, type: 'gestao' },
-  { id: '19', name: 'Líder de Equipe Sênior', fcp: 3.2, type: 'gestao' },
-  { id: '20', name: 'Líder Técnico/Líder de Produto Pleno', fcp: 2.1, type: 'gestao' },
-  { id: '21', name: 'Líder Técnico/Líder de Produto Sênior', fcp: 3.2, type: 'gestao' },
-  { id: '22', name: 'Supervisor Técnico Pleno', fcp: 1.3, type: 'gestao' },
+  { id: '18', name: 'Líder de Equipe Pleno', fcp: 2.1, type: 'sustentacao' },
+  { id: '19', name: 'Líder de Equipe Sênior', fcp: 3.2, type: 'sustentacao' },
+  { id: '20', name: 'Líder Técnico/Líder de Produto Pleno', fcp: 2.1, type: 'sustentacao' },
+  { id: '21', name: 'Líder Técnico/Líder de Produto Sênior', fcp: 3.2, type: 'sustentacao' },
+  { id: '22', name: 'Supervisor Técnico Pleno', fcp: 1.3, type: 'sustentacao' },
 ];
 
 const defaultProjects: Project[] = [
@@ -146,7 +145,7 @@ export const useCalculator = () => {
     const results: CalculationResult[] = [];
     const { ustValue, weeklyHours } = calculatorData.generalParams;
 
-    // Agrupar projetos por tipo e complexidade
+    // Agrupar projetos por tipo e complexidade para calcular duração total
     const projectGroups = calculatorData.projects.reduce((acc, project) => {
       const key = project.type === 'projeto' 
         ? `${project.type}-${project.complexity}` 
@@ -159,24 +158,32 @@ export const useCalculator = () => {
       return acc;
     }, {} as Record<string, Project[]>);
 
-    // Calcular para cada grupo
-    Object.entries(projectGroups).forEach(([key, projects]) => {
-      const totalDuration = projects.reduce((sum, p) => sum + p.duration, 0);
+    // Agrupar squads por tipo e complexidade
+    const squadGroups = calculatorData.squads.reduce((acc, squad) => {
+      const key = squad.type === 'projeto' 
+        ? `${squad.type}-${squad.complexity}` 
+        : squad.type;
+      
+      if (!acc[key]) {
+        acc[key] = [];
+      }
+      acc[key].push(squad);
+      return acc;
+    }, {} as Record<string, SquadComposition[]>);
+
+    // Calcular para cada grupo de squad
+    Object.entries(squadGroups).forEach(([key, squads]) => {
       const [type, complexity] = key.split('-') as [string, string?];
       
-      // Encontrar squads para este tipo/complexidade
-      const relevantSquads = calculatorData.squads.filter(squad => {
-        if (type === 'projeto') {
-          return squad.type === 'projeto' && squad.complexity === complexity;
-        }
-        return squad.type === type;
-      });
-
-      if (relevantSquads.length > 0) {
+      // Calcular duração total baseada nos projetos correspondentes
+      const projectsForThisGroup = projectGroups[key] || [];
+      const totalDuration = projectsForThisGroup.reduce((sum, p) => sum + p.duration, 0);
+      
+      if (totalDuration > 0 && squads.length > 0) {
         let totalProfilesPerWeek = 0;
         let totalUstPerWeek = 0;
 
-        relevantSquads.forEach(squad => {
+        squads.forEach(squad => {
           const profile = calculatorData.profiles.find(p => p.id === squad.profileId);
           if (profile) {
             const profilesContribution = squad.quantity;
@@ -187,9 +194,15 @@ export const useCalculator = () => {
           }
         });
 
-        const categoryName = complexity 
-          ? `${type.charAt(0).toUpperCase() + type.slice(1)} - ${complexity.charAt(0).toUpperCase() + complexity.slice(1)} Complexidade`
-          : type.charAt(0).toUpperCase() + type.slice(1);
+        // Gerar nome da categoria seguindo o padrão
+        let categoryName = '';
+        if (type === 'projeto') {
+          categoryName = `Projetos - ${complexity?.charAt(0).toUpperCase() + complexity?.slice(1)} Complexidade`;
+        } else if (type === 'sustentacao') {
+          categoryName = complexity 
+            ? `Sustentação - Soluções de TI de ${complexity?.charAt(0).toUpperCase() + complexity?.slice(1)} Complexidade`
+            : 'Sustentação';
+        }
 
         const valuePerWeek = totalUstPerWeek * ustValue;
         const totalUst = totalUstPerWeek * totalDuration;
@@ -209,7 +222,28 @@ export const useCalculator = () => {
       }
     });
 
-    return results;
+    return results.sort((a, b) => {
+      // Ordenar: Projetos primeiro (por complexidade), depois Sustentação
+      if (a.category.includes('Projetos') && b.category.includes('Sustentação')) return -1;
+      if (a.category.includes('Sustentação') && b.category.includes('Projetos')) return 1;
+      
+      // Dentro de projetos, ordenar por complexidade
+      if (a.category.includes('Projetos') && b.category.includes('Projetos')) {
+        const complexityOrder = ['Baixa', 'Média', 'Alta'];
+        const aComplexity = a.category.includes('Baixa') ? 0 : a.category.includes('Média') ? 1 : 2;
+        const bComplexity = b.category.includes('Baixa') ? 0 : b.category.includes('Média') ? 1 : 2;
+        return aComplexity - bComplexity;
+      }
+      
+      // Dentro de sustentação, ordenar por complexidade
+      if (a.category.includes('Sustentação') && b.category.includes('Sustentação')) {
+        const aComplexity = a.category.includes('Baixa') ? 0 : a.category.includes('Média') ? 1 : 2;
+        const bComplexity = b.category.includes('Baixa') ? 0 : b.category.includes('Média') ? 1 : 2;
+        return aComplexity - bComplexity;
+      }
+      
+      return 0;
+    });
   };
 
   return {
