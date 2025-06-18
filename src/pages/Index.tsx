@@ -71,15 +71,6 @@ const Index = () => {
     }
 
     if (currentStep === 3) {
-      if (selectedProfileIds.length === 0) {
-        toast({
-          title: "Perfis necessários",
-          description: "Selecione pelo menos um perfil para composição de squads.",
-          variant: "destructive"
-        });
-        return;
-      }
-      
       if (!calculatorData.generalParams.ustValue || !calculatorData.generalParams.contractDuration || !calculatorData.generalParams.weeklyHours) {
         toast({
           title: "Parâmetros incompletos",
@@ -145,12 +136,7 @@ const Index = () => {
         return (
           <Step3GeneralParams
             data={calculatorData.generalParams}
-            profiles={calculatorData.profiles}
-            selectedProfileIds={selectedProfileIds}
             onChange={updateGeneralParams}
-            onToggleProfile={toggleProfileSelection}
-            onSelectAllProfiles={selectAllProfiles}
-            onDeselectAllProfiles={deselectAllProfiles}
           />
         );
       case 4:
