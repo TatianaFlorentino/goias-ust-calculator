@@ -7,7 +7,7 @@ import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Badge } from '@/components/ui/badge';
 import { Checkbox } from '@/components/ui/checkbox';
-import { Plus, Edit, X } from 'lucide-react';
+import { Plus, Edit, X, Copy } from 'lucide-react';
 import { Project, ProfessionalProfile, DefaultSquad } from '@/types/calculator';
 
 interface Step4ProjectsAndProfilesProps {
@@ -102,6 +102,16 @@ const Step4ProjectsAndProfiles: React.FC<Step4ProjectsAndProfilesProps> = ({
     }
   };
 
+  const handleApplyDefaultSquad = (squad: DefaultSquad) => {
+    // Auto-select profiles that match the default squad
+    squad.profiles.forEach(defaultProfile => {
+      const matchingProfile = profiles.find(p => p.name === defaultProfile.profileName);
+      if (matchingProfile && !selectedProfileIds.includes(matchingProfile.id)) {
+        onToggleProfileSelection(matchingProfile.id);
+      }
+    });
+  };
+
   const getComplexityColor = (complexity: string) => {
     switch (complexity) {
       case 'baixa': return 'bg-green-100 text-green-800';
@@ -192,22 +202,24 @@ const Step4ProjectsAndProfiles: React.FC<Step4ProjectsAndProfilesProps> = ({
                     </Select>
                   </div>
 
-                  <div className="space-y-2">
-                    <Label>Complexidade *</Label>
-                    <Select 
-                      value={newProject.complexity} 
-                      onValueChange={(value: any) => setNewProject({ ...newProject, complexity: value })}
-                    >
-                      <SelectTrigger className="border-emerald-200 focus:border-emerald-600">
-                        <SelectValue />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="baixa">Baixa</SelectItem>
-                        <SelectItem value="media">Média</SelectItem>
-                        <SelectItem value="alta">Alta</SelectItem>
-                      </SelectContent>
-                    </Select>
-                  </div>
+                  {newProject.type === 'projeto' && (
+                    <div className="space-y-2">
+                      <Label>Complexidade *</Label>
+                      <Select 
+                        value={newProject.complexity} 
+                        onValueChange={(value: any) => setNewProject({ ...newProject, complexity: value })}
+                      >
+                        <SelectTrigger className="border-emerald-200 focus:border-emerald-600">
+                          <SelectValue />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="baixa">Baixa</SelectItem>
+                          <SelectItem value="media">Média</SelectItem>
+                          <SelectItem value="alta">Alta</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </div>
+                  )}
 
                   <div className="space-y-2">
                     <Label>Duração (semanas) *</Label>
@@ -254,9 +266,11 @@ const Step4ProjectsAndProfiles: React.FC<Step4ProjectsAndProfilesProps> = ({
                       <Badge className={getTypeColor(project.type)}>
                         {project.type.charAt(0).toUpperCase() + project.type.slice(1)}
                       </Badge>
-                      <Badge className={getComplexityColor(project.complexity)}>
-                        {project.complexity.charAt(0).toUpperCase() + project.complexity.slice(1)}
-                      </Badge>
+                      {project.complexity && (
+                        <Badge className={getComplexityColor(project.complexity)}>
+                          {project.complexity.charAt(0).toUpperCase() + project.complexity.slice(1)}
+                        </Badge>
+                      )}
                     </div>
                     <p className="text-sm text-gray-600">
                       <strong>Duração:</strong> {project.duration} semanas
@@ -318,21 +332,39 @@ const Step4ProjectsAndProfiles: React.FC<Step4ProjectsAndProfilesProps> = ({
 
         {/* Seção de Squads Padrão */}
         <div className="space-y-6">
-          <h3 className="text-lg font-medium text-emerald-700">
-            Squads Padrão para Projetos
-          </h3>
+          <div className="flex justify-between items-center">
+            <h3 className="text-lg font-medium text-emerald-700">
+              Squads Padrão para Projetos
+            </h3>
+            <div className="text-sm text-emerald-600">
+              Clique em "Aplicar Squad" para selecionar automaticamente os perfis necessários
+            </div>
+          </div>
           
           {defaultSquads.map((squad, index) => {
             const totals = calculateSquadTotals(squad);
             return (
               <Card key={index} className="border-emerald-200">
                 <CardHeader className="bg-emerald-50">
-                  <CardTitle className="text-lg text-emerald-800">
-                    SQUAD PADRÃO - {squad.type.toUpperCase()} - {squad.complexity.toUpperCase()} COMPLEXIDADE
-                  </CardTitle>
-                  <p className="text-sm text-emerald-700">
-                    QTDE SEMANAS: {squad.duration}
-                  </p>
+                  <div className="flex justify-between items-center">
+                    <div>
+                      <CardTitle className="text-lg text-emerald-800">
+                        SQUAD PADRÃO - {squad.type.toUpperCase()} - {squad.complexity.toUpperCase()} COMPLEXIDADE
+                      </CardTitle>
+                      <p className="text-sm text-emerald-700">
+                        QTDE SEMANAS: {squad.duration}
+                      </p>
+                    </div>
+                    <Button
+                      onClick={() => handleApplyDefaultSquad(squad)}
+                      variant="outline"
+                      size="sm"
+                      className="border-emerald-600 text-emerald-600 hover:bg-emerald-50"
+                    >
+                      <Copy className="w-4 h-4 mr-2" />
+                      Aplicar Squad
+                    </Button>
+                  </div>
                 </CardHeader>
                 <CardContent className="p-4">
                   <div className="overflow-x-auto">
@@ -391,7 +423,7 @@ const Step4ProjectsAndProfiles: React.FC<Step4ProjectsAndProfilesProps> = ({
         <div className="bg-emerald-50 p-4 rounded-lg border border-emerald-200">
           <p className="text-sm text-emerald-800">
             <strong>Observação:</strong> Os squads padrão mostram a composição recomendada para cada tipo e complexidade de projeto. 
-            Use a seleção de perfis acima para customizar quais perfis estarão disponíveis no cálculo final.
+            Use o botão "Aplicar Squad" para selecionar automaticamente os perfis necessários ou faça sua própria seleção manual.
           </p>
         </div>
       </CardContent>
