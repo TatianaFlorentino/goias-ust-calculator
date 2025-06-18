@@ -3,7 +3,6 @@ export interface ProfessionalProfile {
   id: string;
   name: string;
   fcp: number;
-  type: 'projeto' | 'sustentacao' | 'gestao';
 }
 
 export interface Project {

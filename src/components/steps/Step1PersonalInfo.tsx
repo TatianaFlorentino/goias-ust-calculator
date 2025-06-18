@@ -12,19 +12,19 @@ interface Step1PersonalInfoProps {
 }
 
 const organs = [
-  'Casa Civil',
-  'Secretaria de Estado da Economia',
-  'Secretaria de Estado da Educação',
-  'Secretaria de Estado da Saúde',
-  'Secretaria de Estado da Segurança Pública',
-  'Secretaria de Estado de Desenvolvimento Social',
-  'Secretaria de Estado de Meio Ambiente e Desenvolvimento Sustentável',
-  'Secretaria de Estado de Infraestrutura',
-  'Secretaria de Estado da Agricultura, Pecuária e Abastecimento',
-  'Secretaria de Estado de Desenvolvimento e Inovação',
-  'Secretaria de Estado da Cidadania',
-  'Secretaria de Estado da Cultura',
-  'Secretaria de Estado do Esporte e Lazer'
+  { name: 'Casa Civil', acronym: 'CC' },
+  { name: 'Secretaria de Estado da Economia', acronym: 'SEE' },
+  { name: 'Secretaria de Estado da Educação', acronym: 'SEDUC' },
+  { name: 'Secretaria de Estado da Saúde', acronym: 'SES' },
+  { name: 'Secretaria de Estado da Segurança Pública', acronym: 'SSP' },
+  { name: 'Secretaria de Estado de Desenvolvimento Social', acronym: 'SEDS' },
+  { name: 'Secretaria de Estado de Meio Ambiente e Desenvolvimento Sustentável', acronym: 'SEMAD' },
+  { name: 'Secretaria de Estado de Infraestrutura', acronym: 'SEINFRA' },
+  { name: 'Secretaria de Estado da Agricultura, Pecuária e Abastecimento', acronym: 'SEAPA' },
+  { name: 'Secretaria de Estado de Desenvolvimento e Inovação', acronym: 'SEDI' },
+  { name: 'Secretaria de Estado da Cidadania', acronym: 'SECID' },
+  { name: 'Secretaria de Estado da Cultura', acronym: 'SECULT' },
+  { name: 'Secretaria de Estado do Esporte e Lazer', acronym: 'SEEL' }
 ];
 
 const Step1PersonalInfo: React.FC<Step1PersonalInfoProps> = ({ data, onChange }) => {
@@ -75,8 +75,11 @@ const Step1PersonalInfo: React.FC<Step1PersonalInfoProps> = ({ data, onChange })
             </SelectTrigger>
             <SelectContent>
               {organs.map((organ) => (
-                <SelectItem key={organ} value={organ}>
-                  {organ}
+                <SelectItem key={organ.acronym} value={organ.name}>
+                  <div className="flex items-center justify-between w-full">
+                    <span>{organ.name}</span>
+                    <span className="text-emerald-600 font-medium ml-2">({organ.acronym})</span>
+                  </div>
                 </SelectItem>
               ))}
             </SelectContent>
