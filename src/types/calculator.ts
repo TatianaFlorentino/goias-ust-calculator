@@ -8,7 +8,7 @@ export interface ProfessionalProfile {
 export interface Project {
   id: string;
   name: string;
-  type: 'projeto' | 'sustentacao' | 'gestao';
+  type: 'projeto' | 'sustentacao';
   complexity: 'baixa' | 'media' | 'alta';
   duration: number; // em semanas
 }
@@ -17,8 +17,21 @@ export interface SquadComposition {
   id: string;
   profileId: string;
   quantity: number;
-  type: 'projeto' | 'sustentacao' | 'gestao';
+  type: 'projeto' | 'sustentacao';
   complexity?: 'baixa' | 'media' | 'alta';
+}
+
+export interface DefaultSquadProfile {
+  profileName: string;
+  fcp: number;
+  quantity: number;
+}
+
+export interface DefaultSquad {
+  type: 'projeto' | 'sustentacao';
+  complexity: 'baixa' | 'media' | 'alta';
+  duration: number;
+  profiles: DefaultSquadProfile[];
 }
 
 export interface CalculatorData {
@@ -35,6 +48,7 @@ export interface CalculatorData {
   profiles: ProfessionalProfile[];
   projects: Project[];
   squads: SquadComposition[];
+  selectedProfileIds: string[];
 }
 
 export interface CalculationResult {

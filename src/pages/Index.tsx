@@ -5,7 +5,7 @@ import StepIndicator from '@/components/StepIndicator';
 import Step1PersonalInfo from '@/components/steps/Step1PersonalInfo';
 import Step2ProfileFCP from '@/components/steps/Step2ProfileFCP';
 import Step3GeneralParams from '@/components/steps/Step3GeneralParams';
-import Step3Projects from '@/components/steps/Step3Projects';
+import Step4ProjectsAndProfiles from '@/components/steps/Step4ProjectsAndProfiles';
 import Step4SquadComposition from '@/components/steps/Step4SquadComposition';
 import Step5Summary from '@/components/steps/Step5Summary';
 import OnboardingTrigger from '@/components/onboarding/OnboardingTrigger';
@@ -16,7 +16,7 @@ const stepNames = [
   'Informações Pessoais',
   'Cadastro de Perfis FCP',
   'Parâmetros Gerais',
-  'Cadastro de Projetos',
+  'Projetos e Perfis',
   'Formato dos Squads',
   'Resumo / Cálculo'
 ];
@@ -141,11 +141,16 @@ const Index = () => {
         );
       case 4:
         return (
-          <Step3Projects
+          <Step4ProjectsAndProfiles
             projects={calculatorData.projects}
+            profiles={calculatorData.profiles}
+            selectedProfileIds={selectedProfileIds}
             onAddProject={addProject}
             onUpdateProject={updateProject}
             onDeleteProject={deleteProject}
+            onToggleProfileSelection={toggleProfileSelection}
+            onSelectAllProfiles={selectAllProfiles}
+            onDeselectAllProfiles={deselectAllProfiles}
           />
         );
       case 5:
