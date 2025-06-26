@@ -183,6 +183,7 @@ export const useCalculator = () => {
       if (totalDuration > 0 && squads.length > 0) {
         let totalProfilesPerWeek = 0;
         let totalUstPerWeek = 0;
+        const squadCompositions: Array<{profile: string, quantity: number, ustContribution: number}> = [];
 
         squads.forEach(squad => {
           const profile = calculatorData.profiles.find(p => p.id === squad.profileId);
@@ -192,6 +193,13 @@ export const useCalculator = () => {
             
             totalProfilesPerWeek += profilesContribution;
             totalUstPerWeek += ustContribution;
+            
+            // Armazenar detalhes da composição para transparência
+            squadCompositions.push({
+              profile: profile.name,
+              quantity: squad.quantity,
+              ustContribution
+            });
           }
         });
 
@@ -218,7 +226,9 @@ export const useCalculator = () => {
           ustPerWeek: totalUstPerWeek,
           valuePerWeek,
           totalUst,
-          totalValue
+          totalValue,
+          // Adicionar detalhes da composição para transparência
+          squadComposition: squadCompositions
         });
       }
     });

@@ -1,9 +1,8 @@
-
-import React from 'react';
+import React, { useState } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { FileText, Download } from 'lucide-react';
+import { FileText, Download, ChevronDown, ChevronUp } from 'lucide-react';
 import { CalculationResult } from '@/types/calculator';
 
 interface Step5SummaryProps {
@@ -17,9 +16,21 @@ const Step5Summary: React.FC<Step5SummaryProps> = ({
   personalInfo, 
   generalParams 
 }) => {
+  const [expandedCategories, setExpandedCategories] = useState<Set<string>>(new Set());
+  
   const totalUST = results.reduce((sum, result) => sum + result.totalUst, 0);
   const totalValue = results.reduce((sum, result) => sum + result.totalValue, 0);
   const totalProfilesPerWeek = results.reduce((sum, result) => sum + result.profilesPerWeek, 0);
+
+  const toggleCategoryExpansion = (category: string) => {
+    const newExpanded = new Set(expandedCategories);
+    if (newExpanded.has(category)) {
+      newExpanded.delete(category);
+    } else {
+      newExpanded.add(category);
+    }
+    setExpandedCategories(newExpanded);
+  };
 
   const exportToPDF = () => {
     // Implementar exportação para PDF
@@ -36,7 +47,7 @@ const Step5Summary: React.FC<Step5SummaryProps> = ({
       <CardHeader className="text-center bg-gradient-to-r from-goias-green to-goias-dark-green text-white rounded-t-lg">
         <CardTitle className="text-2xl">Etapa 05 - Resumo Geral / Memória de Cálculo</CardTitle>
         <CardDescription className="text-gray-100">
-          Resultado consolidado com transparência dos cálculos
+          Resultado consolidado com transparência dos cálculos e composições de squad
         </CardDescription>
       </CardHeader>
       <CardContent className="space-y-6 p-6">
@@ -105,10 +116,13 @@ const Step5Summary: React.FC<Step5SummaryProps> = ({
           </Card>
         </div>
 
-        {/* Tabela de Resultados */}
+        {/* Tabela de Resultados com Detalhamento de Composição */}
         <Card className="border-goias-green/20">
           <CardHeader>
             <CardTitle className="text-lg text-goias-green">Detalhamento por Categoria</CardTitle>
+            <CardDescription className="text-sm text-goias-dark-green">
+              Clique em uma linha para ver a composição detalhada do squad
+            </CardDescription>
           </CardHeader>
           <CardContent>
             <div className="overflow-x-auto">
@@ -123,34 +137,119 @@ const Step5Summary: React.FC<Step5SummaryProps> = ({
                     <th className="text-right p-2 font-medium text-goias-green">R$/Semana</th>
                     <th className="text-right p-2 font-medium text-goias-green">Total (UST)</th>
                     <th className="text-right p-2 font-medium text-goias-green">Total (R$)</th>
+                    <th className="text-center p-2 font-medium text-goias-green">Detalhes</th>
                   </tr>
                 </thead>
                 <tbody>
                   {results.map((result, index) => (
-                    <tr key={index} className="border-b border-gray-100 hover:bg-goias-light-green/5">
-                      <td className="p-2">
-                        <div className="flex items-center gap-2">
-                          <span className="font-medium">{result.category}</span>
-                        </div>
-                      </td>
-                      <td className="text-right p-2">{result.profilesPerWeek.toFixed(2)}</td>
-                      <td className="text-right p-2">{result.duration}</td>
-                      <td className="text-right p-2">{result.squadsPerYear.toFixed(2)}</td>
-                      <td className="text-right p-2">{result.ustPerWeek.toFixed(0)}</td>
-                      <td className="text-right p-2">
-                        R$ {result.valuePerWeek.toLocaleString('pt-BR', {
-                          minimumFractionDigits: 2,
-                          maximumFractionDigits: 2
-                        })}
-                      </td>
-                      <td className="text-right p-2">{result.totalUst.toLocaleString('pt-BR')}</td>
-                      <td className="text-right p-2">
-                        R$ {result.totalValue.toLocaleString('pt-BR', {
-                          minimumFractionDigits: 2,
-                          maximumFractionDigits: 2
-                        })}
-                      </td>
-                    </tr>
+                    <React.Fragment key={index}>
+                      <tr className="border-b border-gray-100 hover:bg-goias-light-green/5">
+                        <td className="p-2">
+                          <div className="flex items-center gap-2">
+                            <span className="font-medium">{result.category}</span>
+                            {result.squadComposition && result.squadComposition.length > 1 && (
+                              <Badge variant="secondary" className="text-xs">
+                                Squad Combinado
+                              </Badge>
+                            )}
+                          </div>
+                        </td>
+                        <td className="text-right p-2">{result.profilesPerWeek.toFixed(2)}</td>
+                        <td className="text-right p-2">{result.duration}</td>
+                        <td className="text-right p-2">{result.squadsPerYear.toFixed(2)}</td>
+                        <td className="text-right p-2">{result.ustPerWeek.toFixed(0)}</td>
+                        <td className="text-right p-2">
+                          R$ {result.valuePerWeek.toLocaleString('pt-BR', {
+                            minimumFractionDigits: 2,
+                            maximumFractionDigits: 2
+                          })}
+                        </td>
+                        <td className="text-right p-2">{result.totalUst.toLocaleString('pt-BR')}</td>
+                        <td className="text-right p-2">
+                          R$ {result.totalValue.toLocaleString('pt-BR', {
+                            minimumFractionDigits: 2,
+                            maximumFractionDigits: 2
+                          })}
+                        </td>
+                        <td className="text-center p-2">
+                          {result.squadComposition && (
+                            <Button
+                              size="sm"
+                              variant="ghost"
+                              onClick={() => toggleCategoryExpansion(result.category)}
+                              className="text-goias-green hover:text-goias-dark-green"
+                            >
+                              {expandedCategories.has(result.category) ? (
+                                <ChevronUp className="w-4 h-4" />
+                              ) : (
+                                <ChevronDown className="w-4 h-4" />
+                              )}
+                            </Button>
+                          )}
+                        </td>
+                      </tr>
+                      {/* Detalhamento da Composição do Squad */}
+                      {expandedCategories.has(result.category) && result.squadComposition && (
+                        <tr className="bg-goias-light-green/10">
+                          <td colSpan={9} className="p-4">
+                            <div className="bg-white rounded-lg border border-goias-green/20 p-4">
+                              <h4 className="font-medium text-goias-dark-green mb-3">
+                                Composição do Squad - {result.category}
+                              </h4>
+                              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
+                                {result.squadComposition.map((comp, compIndex) => (
+                                  <div 
+                                    key={compIndex}
+                                    className="bg-goias-light-green/20 p-3 rounded-lg border border-goias-green/30"
+                                  >
+                                    <h5 className="font-medium text-goias-dark-green text-sm mb-2">
+                                      {comp.profile}
+                                    </h5>
+                                    <div className="space-y-1 text-xs">
+                                      <div className="flex justify-between">
+                                        <span className="text-gray-600">Quantidade:</span>
+                                        <span className="font-medium">{comp.quantity}</span>
+                                      </div>
+                                      <div className="flex justify-between">
+                                        <span className="text-gray-600">UST/Semana:</span>
+                                        <span className="font-medium">{comp.ustContribution.toFixed(0)}</span>
+                                      </div>
+                                      <div className="flex justify-between">
+                                        <span className="text-gray-600">Valor/Semana:</span>
+                                        <span className="font-medium">
+                                          R$ {(comp.ustContribution * generalParams.ustValue).toLocaleString('pt-BR', {
+                                            minimumFractionDigits: 2,
+                                            maximumFractionDigits: 2
+                                          })}
+                                        </span>
+                                      </div>
+                                    </div>
+                                  </div>
+                                ))}
+                              </div>
+                              <div className="mt-3 p-3 bg-goias-green/10 rounded-lg">
+                                <div className="flex justify-between items-center text-sm">
+                                  <span className="font-medium text-goias-dark-green">
+                                    Total da Categoria:
+                                  </span>
+                                  <div className="text-right">
+                                    <div className="font-bold text-goias-dark-green">
+                                      {result.ustPerWeek.toFixed(0)} UST/Semana
+                                    </div>
+                                    <div className="text-goias-dark-green">
+                                      R$ {result.valuePerWeek.toLocaleString('pt-BR', {
+                                        minimumFractionDigits: 2,
+                                        maximumFractionDigits: 2
+                                      })}/Semana
+                                    </div>
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
+                          </td>
+                        </tr>
+                      )}
+                    </React.Fragment>
                   ))}
                   <tr className="border-t-2 border-goias-green/40 bg-goias-light-green/10 font-semibold">
                     <td className="p-2 text-goias-green">TOTAL GERAL</td>
@@ -166,6 +265,7 @@ const Step5Summary: React.FC<Step5SummaryProps> = ({
                         maximumFractionDigits: 2
                       })}
                     </td>
+                    <td className="text-right p-2">-</td>
                   </tr>
                 </tbody>
               </table>
@@ -212,6 +312,8 @@ const Step5Summary: React.FC<Step5SummaryProps> = ({
             <li><strong>R$/Semana:</strong> Valor financeiro semanal com base no valor da UST informado</li>
             <li><strong>Total (UST):</strong> Total acumulado de USTs para a categoria</li>
             <li><strong>Total (R$):</strong> Valor financeiro total estimado por categoria</li>
+            <li><strong>Squad Combinado:</strong> Indica quando múltiplas composições (padrão + personalizada) foram aplicadas</li>
+            <li><strong>Detalhes:</strong> Clique para expandir e ver a composição detalhada de cada perfil no squad</li>
           </ul>
         </div>
       </CardContent>

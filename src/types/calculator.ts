@@ -60,4 +60,9 @@ export interface CalculationResult {
   valuePerWeek: number;
   totalUst: number;
   totalValue: number;
+  squadComposition?: Array<{
+    profile: string;
+    quantity: number;
+    ustContribution: number;
+  }>;
 }
