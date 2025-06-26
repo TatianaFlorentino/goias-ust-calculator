@@ -6,8 +6,9 @@ import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Badge } from '@/components/ui/badge';
 import { Checkbox } from '@/components/ui/checkbox';
-import { Plus, Edit, X, Copy } from 'lucide-react';
+import { Plus, Edit, X, Copy, Users } from 'lucide-react';
 import { Project, ProfessionalProfile, DefaultSquad, SquadComposition } from '@/types/calculator';
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 
 interface Step4ProjectsAndProfilesProps {
   projects: Project[];
@@ -366,88 +367,112 @@ const Step4ProjectsAndProfiles: React.FC<Step4ProjectsAndProfilesProps> = ({
             </div>
           </div>
           
-          {defaultSquads.map((squad, index) => {
-            const totals = calculateSquadTotals(squad);
-            return (
-              <Card key={index} className="border-emerald-200">
-                <CardHeader className="bg-emerald-50">
-                  <div className="flex justify-between items-center">
-                    <div>
-                      <CardTitle className="text-lg text-emerald-800">
-                        SQUAD PADRÃO - {squad.type.toUpperCase()} - {squad.complexity.toUpperCase()} COMPLEXIDADE
-                      </CardTitle>
-                      <p className="text-sm text-emerald-700">
-                        QTDE SEMANAS: {squad.duration}
-                      </p>
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            {defaultSquads.map((squad, index) => {
+              const totals = calculateSquadTotals(squad);
+              const complexityLabel = squad.complexity.charAt(0).toUpperCase() + squad.complexity.slice(1);
+              
+              return (
+                <Card key={index} className="border-emerald-200 hover:shadow-lg transition-shadow">
+                  <CardHeader className="bg-emerald-50 border-b border-emerald-200">
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center gap-2">
+                        <Users className="w-5 h-5 text-emerald-600" />
+                        <div>
+                          <CardTitle className="text-lg text-emerald-800">
+                            Projeto - {complexityLabel}
+                          </CardTitle>
+                          <p className="text-sm text-emerald-600">
+                            {squad.duration} semanas
+                          </p>
+                        </div>
+                      </div>
+                      <Badge className={getComplexityColor(squad.complexity)}>
+                        {complexityLabel}
+                      </Badge>
                     </div>
-                    <Button
-                      onClick={() => handleApplyDefaultSquad(squad)}
-                      variant="outline"
-                      size="sm"
-                      className="border-emerald-600 text-emerald-600 hover:bg-emerald-50"
-                    >
-                      <Copy className="w-4 h-4 mr-2" />
-                      Aplicar Squad
-                    </Button>
-                  </div>
-                </CardHeader>
-                <CardContent className="p-4">
-                  <div className="overflow-x-auto">
-                    <table className="w-full text-sm">
-                      <thead>
-                        <tr className="border-b border-emerald-200">
-                          <th className="text-left p-2">Perfil Profissional</th>
-                          <th className="text-center p-2">FCP</th>
-                          <th className="text-center p-2">Quantidade</th>
-                          <th className="text-center p-2">UST/Semana</th>
-                          <th className="text-center p-2">R$/Semana</th>
-                          <th className="text-center p-2">Total (UST)</th>
-                          <th className="text-center p-2">Total (R$)</th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        {squad.profiles.map((profile, profileIndex) => {
-                          const ustPerWeek = profile.quantity * profile.fcp * 40;
-                          const valuePerWeek = ustPerWeek * 70;
-                          const totalUst = ustPerWeek * squad.duration;
-                          const totalValue = totalUst * 70;
-                          
-                          return (
-                            <tr key={profileIndex} className="border-b border-gray-100">
-                              <td className="p-2">{profile.profileName}</td>
-                              <td className="text-center p-2">{profile.fcp}</td>
-                              <td className="text-center p-2">{profile.quantity.toFixed(2)}</td>
-                              <td className="text-center p-2">{Math.round(ustPerWeek)}</td>
-                              <td className="text-center p-2">R$ {valuePerWeek.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}</td>
-                              <td className="text-center p-2">{Math.round(totalUst).toLocaleString('pt-BR')}</td>
-                              <td className="text-center p-2">R$ {totalValue.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}</td>
-                            </tr>
-                          );
-                        })}
-                        <tr className="bg-emerald-50 font-bold">
-                          <td className="p-2">TOTAIS (SQUADS - {squad.type.toUpperCase()} - {squad.complexity.toUpperCase()} COMPLEXIDADE):</td>
-                          <td className="text-center p-2">-</td>
-                          <td className="text-center p-2">{totals.totalQuantity.toFixed(2)}</td>
-                          <td className="text-center p-2">{Math.round(totals.totalUstPerWeek)}</td>
-                          <td className="text-center p-2">R$ {totals.totalValuePerWeek.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}</td>
-                          <td className="text-center p-2">{Math.round(totals.totalUst).toLocaleString('pt-BR')}</td>
-                          <td className="text-center p-2">R$ {totals.totalValue.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}</td>
-                        </tr>
-                      </tbody>
-                    </table>
-                  </div>
-                  <p className="text-xs text-gray-600 mt-2">
-                    (*) O quantitativo de semanas do squad considera a lista de projetos, complexidade e duração informados.
-                  </p>
-                </CardContent>
-              </Card>
-            );
-          })}
+                  </CardHeader>
+                  
+                  <CardContent className="p-4">
+                    <div className="space-y-4">
+                      {/* Lista de Perfis */}
+                      <div>
+                        <h4 className="font-medium text-gray-800 mb-3">Composição do Squad:</h4>
+                        <div className="space-y-2 max-h-64 overflow-y-auto">
+                          {squad.profiles.map((profile, profileIndex) => {
+                            const ustPerWeek = profile.quantity * profile.fcp * 40;
+                            const valuePerWeek = ustPerWeek * 70;
+                            
+                            return (
+                              <div key={profileIndex} className="bg-gray-50 p-3 rounded-lg border border-gray-200">
+                                <div className="flex justify-between items-start">
+                                  <div className="flex-1">
+                                    <h5 className="font-medium text-gray-800 text-sm leading-tight">
+                                      {profile.profileName}
+                                    </h5>
+                                    <div className="flex gap-4 mt-1 text-xs text-gray-600">
+                                      <span>FCP: {profile.fcp}</span>
+                                      <span>Qtd: {profile.quantity.toFixed(2)}</span>
+                                    </div>
+                                  </div>
+                                  <div className="text-right">
+                                    <div className="text-sm font-medium text-emerald-600">
+                                      {Math.round(ustPerWeek)} UST/sem
+                                    </div>
+                                    <div className="text-xs text-gray-600">
+                                      R$ {valuePerWeek.toLocaleString('pt-BR', { minimumFractionDigits: 0 })}
+                                    </div>
+                                  </div>
+                                </div>
+                              </div>
+                            );
+                          })}
+                        </div>
+                      </div>
+
+                      {/* Resumo Financeiro */}
+                      <div className="bg-emerald-50 p-3 rounded-lg border border-emerald-200">
+                        <h4 className="font-medium text-emerald-800 mb-2">Resumo Financeiro</h4>
+                        <div className="grid grid-cols-2 gap-2 text-sm">
+                          <div>
+                            <span className="text-gray-600">Total Profissionais:</span>
+                            <div className="font-medium">{totals.totalQuantity.toFixed(2)}</div>
+                          </div>
+                          <div>
+                            <span className="text-gray-600">UST/Semana:</span>
+                            <div className="font-medium">{Math.round(totals.totalUstPerWeek)}</div>
+                          </div>
+                          <div>
+                            <span className="text-gray-600">R$/Semana:</span>
+                            <div className="font-medium">R$ {totals.totalValuePerWeek.toLocaleString('pt-BR', { minimumFractionDigits: 0 })}</div>
+                          </div>
+                          <div>
+                            <span className="text-gray-600">Valor Total:</span>
+                            <div className="font-medium text-emerald-700">R$ {totals.totalValue.toLocaleString('pt-BR', { minimumFractionDigits: 0 })}</div>
+                          </div>
+                        </div>
+                      </div>
+
+                      {/* Botão de Aplicar */}
+                      <Button
+                        onClick={() => handleApplyDefaultSquad(squad)}
+                        className="w-full bg-emerald-600 hover:bg-emerald-700"
+                        size="sm"
+                      >
+                        <Copy className="w-4 h-4 mr-2" />
+                        Aplicar Squad {complexityLabel}
+                      </Button>
+                    </div>
+                  </CardContent>
+                </Card>
+              );
+            })}
+          </div>
         </div>
 
         <div className="bg-emerald-50 p-4 rounded-lg border border-emerald-200">
           <p className="text-sm text-emerald-800">
-            <strong>Observação:</strong> Os squads padrão mostram a composição recomendada para cada tipo e complexidade de projeto. 
+            <strong>Observação:</strong> Os squads padrão mostram a composição recomendada para cada complexidade de projeto. 
             Use o botão "Aplicar Squad" para selecionar automaticamente os perfis necessários e criar as composições de squad correspondentes.
           </p>
         </div>
