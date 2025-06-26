@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -16,6 +17,7 @@ interface Step4SquadCompositionProps {
   onAddSquad: (squad: Omit<SquadComposition, 'id'>) => void;
   onUpdateSquad: (id: string, squad: Partial<SquadComposition>) => void;
   onDeleteSquad: (id: string) => void;
+  onAddProfile: (profile: Omit<ProfessionalProfile, 'id'>) => void;
 }
 
 const Step4SquadComposition: React.FC<Step4SquadCompositionProps> = ({
@@ -25,7 +27,8 @@ const Step4SquadComposition: React.FC<Step4SquadCompositionProps> = ({
   squads,
   onAddSquad,
   onUpdateSquad,
-  onDeleteSquad
+  onDeleteSquad,
+  onAddProfile
 }) => {
   const [isAddingSquad, setIsAddingSquad] = useState(false);
   const [showDefaultSquadPreview, setShowDefaultSquadPreview] = useState(false);
@@ -340,6 +343,8 @@ const Step4SquadComposition: React.FC<Step4SquadCompositionProps> = ({
                   projects={groupedProjects[groupKey] || []}
                   profiles={profiles}
                   onDeleteSquad={onDeleteSquad}
+                  onUpdateSquad={onUpdateSquad}
+                  onAddProfile={onAddProfile}
                 />
               ))}
             </div>
@@ -371,7 +376,7 @@ const Step4SquadComposition: React.FC<Step4SquadCompositionProps> = ({
           <p className="text-sm text-emerald-800">
             <strong>Dica:</strong> {showDefaultSquadPreview 
               ? "Visualize as composições recomendadas acima e clique em 'Aplicar Todos os Squads Padrão' para criar automaticamente todas as composições."
-              : "Use 'Aplicar Squads Padrão' para criar automaticamente as composições recomendadas para projetos de baixa, média e alta complexidade. Você pode editar ou adicionar novas composições conforme necessário."
+              : "Use 'Aplicar Squads Padrão' para criar automaticamente as composições recomendadas para projetos de baixa, média e alta complexidade. Você pode editar quantidades ou adicionar novos perfis conforme necessário."
             }
           </p>
         </div>

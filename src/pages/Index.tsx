@@ -95,6 +95,7 @@ const Index = () => {
             onAddSquad={addSquadComposition}
             onUpdateSquad={updateSquadComposition}
             onDeleteSquad={deleteSquadComposition}
+            onAddProfile={addProfile}
           />
         );
       case 6:
