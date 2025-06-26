@@ -2,10 +2,11 @@
 import React, { useState } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Plus } from 'lucide-react';
+import { Plus, Zap } from 'lucide-react';
 import { ProfessionalProfile, SquadComposition, Project } from '@/types/calculator';
 import SquadFormModal from './squad-composition/SquadFormModal';
 import SquadGroupCard from './squad-composition/SquadGroupCard';
+import { defaultSquads } from './project-profiles/defaultSquads';
 
 interface Step4SquadCompositionProps {
   profiles: ProfessionalProfile[];
@@ -67,6 +68,31 @@ const Step4SquadComposition: React.FC<Step4SquadCompositionProps> = ({
       case 'alta': return 'Alta';
       default: return complexity;
     }
+  };
+
+  const applyAllDefaultSquads = () => {
+    defaultSquads.forEach(squad => {
+      squad.profiles.forEach(defaultProfile => {
+        const matchingProfile = profiles.find(p => p.name === defaultProfile.profileName);
+        if (matchingProfile) {
+          // Verificar se esta composição de squad já existe
+          const existingSquad = squads.find(s => 
+            s.profileId === matchingProfile.id && 
+            s.type === squad.type && 
+            s.complexity === squad.complexity
+          );
+
+          if (!existingSquad) {
+            onAddSquad({
+              profileId: matchingProfile.id,
+              quantity: defaultProfile.quantity,
+              type: squad.type,
+              complexity: squad.complexity
+            });
+          }
+        }
+      });
+    });
   };
 
   if (availableProfiles.length === 0) {
@@ -162,13 +188,23 @@ const Step4SquadComposition: React.FC<Step4SquadCompositionProps> = ({
               </div>
             ))}
           </div>
-          <Button
-            onClick={() => setIsAddingSquad(true)}
-            className="bg-blue-600 hover:bg-blue-700"
-          >
-            <Plus className="w-4 h-4 mr-2" />
-            Criar Squad Adicional
-          </Button>
+          <div className="flex gap-2">
+            <Button
+              onClick={applyAllDefaultSquads}
+              className="bg-emerald-600 hover:bg-emerald-700"
+            >
+              <Zap className="w-4 h-4 mr-2" />
+              Aplicar Squads Padrão (Baixa, Média, Alta)
+            </Button>
+            <Button
+              onClick={() => setIsAddingSquad(true)}
+              variant="outline"
+              className="border-blue-600 text-blue-600 hover:bg-blue-50"
+            >
+              <Plus className="w-4 h-4 mr-2" />
+              Criar Squad Personalizado
+            </Button>
+          </div>
         </div>
 
         <div className="flex justify-between items-center">
@@ -200,16 +236,31 @@ const Step4SquadComposition: React.FC<Step4SquadCompositionProps> = ({
         </div>
 
         {squads.length === 0 && (
-          <div className="text-center py-8 text-gray-500">
-            <p>Nenhuma composição de squad criada ainda.</p>
-            <p className="text-sm">Use os squads padrão na etapa anterior ou clique em "Criar Squad Adicional" para adicionar composições personalizadas.</p>
+          <div className="text-center py-8">
+            <div className="bg-emerald-50 p-6 rounded-lg border border-emerald-200">
+              <h3 className="text-lg font-medium text-emerald-800 mb-2">
+                Nenhuma composição de squad criada ainda
+              </h3>
+              <p className="text-emerald-700 mb-4">
+                Use o botão "Aplicar Squads Padrão" para criar automaticamente as composições 
+                para projetos de baixa, média e alta complexidade.
+              </p>
+              <Button
+                onClick={applyAllDefaultSquads}
+                className="bg-emerald-600 hover:bg-emerald-700"
+              >
+                <Zap className="w-4 h-4 mr-2" />
+                Aplicar Squads Padrão Agora
+              </Button>
+            </div>
           </div>
         )}
 
         <div className="bg-emerald-50 p-4 rounded-lg border border-emerald-200">
           <p className="text-sm text-emerald-800">
-            <strong>Dica:</strong> As composições de squad são criadas automaticamente quando você aplica um squad padrão na etapa anterior. 
-            Aqui você pode visualizar, editar ou adicionar novas composições conforme necessário.
+            <strong>Dica:</strong> Use "Aplicar Squads Padrão" para criar automaticamente as composições 
+            recomendadas para projetos de baixa, média e alta complexidade. Você pode editar ou adicionar 
+            novas composições conforme necessário.
           </p>
         </div>
       </CardContent>
