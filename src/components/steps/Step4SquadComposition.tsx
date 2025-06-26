@@ -85,7 +85,7 @@ const Step4SquadComposition: React.FC<Step4SquadCompositionProps> = ({
                 Nenhum perfil selecionado
               </h3>
               <p className="text-amber-700">
-                Volte para a etapa anterior (Parâmetros Gerais) e selecione os perfis 
+                Volte para a etapa anterior (Cadastro de Projetos e Seleção de Perfis) e selecione os perfis 
                 que devem estar disponíveis para composição de squads.
               </p>
             </div>
@@ -111,7 +111,7 @@ const Step4SquadComposition: React.FC<Step4SquadCompositionProps> = ({
                 Nenhum projeto cadastrado
               </h3>
               <p className="text-amber-700">
-                Volte para a etapa anterior (Cadastro de Projetos) e cadastre pelo menos 
+                Volte para a etapa anterior (Cadastro de Projetos e Seleção de Perfis) e cadastre pelo menos 
                 um projeto para poder definir a composição dos squads.
               </p>
             </div>
@@ -126,18 +126,30 @@ const Step4SquadComposition: React.FC<Step4SquadCompositionProps> = ({
       <CardHeader className="text-center bg-gradient-to-r from-emerald-600 to-emerald-700 text-white rounded-t-lg">
         <CardTitle className="text-2xl">Etapa 05 - Formato dos Squads</CardTitle>
         <CardDescription className="text-gray-100">
-          Selecione os projetos e defina a composição das equipes
+          Gerencie as composições de squad criadas automaticamente ou adicione novas
         </CardDescription>
       </CardHeader>
       <CardContent className="space-y-6 p-6">
+        {/* Mostrar perfis selecionados */}
+        <div className="bg-green-50 p-4 rounded-lg border border-green-200">
+          <h3 className="text-lg font-medium text-green-800 mb-3">
+            Perfis Selecionados ({availableProfiles.length})
+          </h3>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-2">
+            {availableProfiles.map((profile) => (
+              <div key={profile.id} className="bg-white p-2 rounded-md border border-green-100">
+                <div className="text-sm font-medium text-green-900">{profile.name}</div>
+                <div className="text-xs text-green-700">FCP: {profile.fcp}</div>
+              </div>
+            ))}
+          </div>
+        </div>
+
         {/* Lista de Projetos Cadastrados */}
         <div className="bg-blue-50 p-4 rounded-lg border border-blue-200">
           <h3 className="text-lg font-medium text-blue-800 mb-3">
-            Projetos Disponíveis para Composição de Squad ({projects.length})
+            Projetos Disponíveis ({projects.length})
           </h3>
-          <p className="text-sm text-blue-700 mb-3">
-            Use o botão "Criar Squad" para selecionar projetos e definir suas composições:
-          </p>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3 mb-4">
             {projects.map((project) => (
               <div key={project.id} className="bg-white p-3 rounded-md border border-blue-100">
@@ -155,13 +167,13 @@ const Step4SquadComposition: React.FC<Step4SquadCompositionProps> = ({
             className="bg-blue-600 hover:bg-blue-700"
           >
             <Plus className="w-4 h-4 mr-2" />
-            Criar Squad
+            Criar Squad Adicional
           </Button>
         </div>
 
         <div className="flex justify-between items-center">
           <h3 className="text-lg font-medium text-emerald-700">
-            Composições de Squad Criadas ({squads.length})
+            Composições de Squad ({squads.length})
           </h3>
         </div>
 
@@ -190,14 +202,14 @@ const Step4SquadComposition: React.FC<Step4SquadCompositionProps> = ({
         {squads.length === 0 && (
           <div className="text-center py-8 text-gray-500">
             <p>Nenhuma composição de squad criada ainda.</p>
-            <p className="text-sm">Clique em "Criar Squad" para selecionar projetos e definir suas composições.</p>
+            <p className="text-sm">Use os squads padrão na etapa anterior ou clique em "Criar Squad Adicional" para adicionar composições personalizadas.</p>
           </div>
         )}
 
         <div className="bg-emerald-50 p-4 rounded-lg border border-emerald-200">
           <p className="text-sm text-emerald-800">
-            <strong>Dica:</strong> Use os checkboxes para selecionar múltiplos projetos ao criar uma composição de squad. 
-            Cada projeto selecionado terá sua própria composição criada automaticamente.
+            <strong>Dica:</strong> As composições de squad são criadas automaticamente quando você aplica um squad padrão na etapa anterior. 
+            Aqui você pode visualizar, editar ou adicionar novas composições conforme necessário.
           </p>
         </div>
       </CardContent>

@@ -1,25 +1,14 @@
+
 import React from 'react';
-import { Button } from '@/components/ui/button';
-import Header from '@/components/Header';
-import StepIndicator from '@/components/StepIndicator';
+import { Header } from '@/components/Header';
+import { StepIndicator } from '@/components/StepIndicator';
+import { useCalculator } from '@/hooks/useCalculator';
 import Step1PersonalInfo from '@/components/steps/Step1PersonalInfo';
-import Step2ProfileFCP from '@/components/steps/Step2ProfileFCP';
+import Step2GeneralParams from '@/components/steps/Step2GeneralParams';
 import Step3GeneralParams from '@/components/steps/Step3GeneralParams';
 import Step4ProjectsAndProfiles from '@/components/steps/Step4ProjectsAndProfiles';
 import Step4SquadComposition from '@/components/steps/Step4SquadComposition';
 import Step5Summary from '@/components/steps/Step5Summary';
-import OnboardingTrigger from '@/components/onboarding/OnboardingTrigger';
-import { useCalculator } from '@/hooks/useCalculator';
-import { useToast } from '@/hooks/use-toast';
-
-const stepNames = [
-  'Informações Pessoais',
-  'Cadastro de Perfis FCP',
-  'Parâmetros Gerais',
-  'Projetos e Perfis',
-  'Formato dos Squads',
-  'Resumo / Cálculo'
-];
 
 const Index = () => {
   const {
@@ -44,88 +33,18 @@ const Index = () => {
     calculateResults
   } = useCalculator();
 
-  const { toast } = useToast();
-
-  const handleNext = () => {
-    // Validações básicas
-    if (currentStep === 1) {
-      if (!calculatorData.personalInfo.name || !calculatorData.personalInfo.email || !calculatorData.personalInfo.organ) {
-        toast({
-          title: "Campos obrigatórios",
-          description: "Preencha todos os campos obrigatórios antes de continuar.",
-          variant: "destructive"
-        });
-        return;
-      }
-    }
-
-    if (currentStep === 2) {
-      if (calculatorData.profiles.length === 0) {
-        toast({
-          title: "Perfis necessários",
-          description: "Cadastre pelo menos um perfil FCP antes de continuar.",
-          variant: "destructive"
-        });
-        return;
-      }
-    }
-
-    if (currentStep === 3) {
-      if (!calculatorData.generalParams.ustValue || !calculatorData.generalParams.contractDuration || !calculatorData.generalParams.weeklyHours) {
-        toast({
-          title: "Parâmetros incompletos",
-          description: "Preencha todos os parâmetros gerais antes de continuar.",
-          variant: "destructive"
-        });
-        return;
-      }
-    }
-
-    if (currentStep === 4) {
-      if (calculatorData.projects.length === 0) {
-        toast({
-          title: "Projetos necessários",
-          description: "Cadastre pelo menos um projeto antes de continuar.",
-          variant: "destructive"
-        });
-        return;
-      }
-    }
-
-    if (currentStep === 5) {
-      if (calculatorData.squads.length === 0) {
-        toast({
-          title: "Composições necessárias",
-          description: "Defina pelo menos uma composição de squad antes de continuar.",
-          variant: "destructive"
-        });
-        return;
-      }
-    }
-
-    if (currentStep < 6) {
-      setCurrentStep(currentStep + 1);
-    }
-  };
-
-  const handleBack = () => {
-    if (currentStep > 1) {
-      setCurrentStep(currentStep - 1);
-    }
-  };
-
   const renderCurrentStep = () => {
     switch (currentStep) {
       case 1:
         return (
           <Step1PersonalInfo
-            data={calculatorData.personalInfo}
-            onChange={updatePersonalInfo}
+            personalInfo={calculatorData.personalInfo}
+            onUpdatePersonalInfo={updatePersonalInfo}
           />
         );
       case 2:
         return (
-          <Step2ProfileFCP
+          <Step2GeneralParams
             profiles={calculatorData.profiles}
             onAddProfile={addProfile}
             onUpdateProfile={updateProfile}
@@ -135,8 +54,8 @@ const Index = () => {
       case 3:
         return (
           <Step3GeneralParams
-            data={calculatorData.generalParams}
-            onChange={updateGeneralParams}
+            generalParams={calculatorData.generalParams}
+            onUpdateGeneralParams={updateGeneralParams}
           />
         );
       case 4:
@@ -145,12 +64,14 @@ const Index = () => {
             projects={calculatorData.projects}
             profiles={calculatorData.profiles}
             selectedProfileIds={selectedProfileIds}
+            squads={calculatorData.squads}
             onAddProject={addProject}
             onUpdateProject={updateProject}
             onDeleteProject={deleteProject}
             onToggleProfileSelection={toggleProfileSelection}
             onSelectAllProfiles={selectAllProfiles}
             onDeselectAllProfiles={deselectAllProfiles}
+            onAddSquadComposition={addSquadComposition}
           />
         );
       case 5:
@@ -168,9 +89,8 @@ const Index = () => {
       case 6:
         return (
           <Step5Summary
-            results={calculateResults()}
-            personalInfo={calculatorData.personalInfo}
-            generalParams={calculatorData.generalParams}
+            calculatorData={calculatorData}
+            calculationResults={calculateResults()}
           />
         );
       default:
@@ -181,66 +101,28 @@ const Index = () => {
   return (
     <div className="min-h-screen bg-gray-50">
       <Header />
-      
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <div className="flex justify-between items-center mb-6">
-          <div></div>
-          <OnboardingTrigger />
-        </div>
-
-        <StepIndicator
-          currentStep={currentStep}
-          totalSteps={6}
-          stepNames={stepNames}
-        />
-
+      <div className="container mx-auto px-4 py-8">
+        <StepIndicator currentStep={currentStep} totalSteps={6} />
         <div className="mt-8">
           {renderCurrentStep()}
         </div>
-
         <div className="flex justify-between mt-8">
-          <Button
-            variant="outline"
-            onClick={handleBack}
+          <button
+            onClick={() => setCurrentStep(Math.max(1, currentStep - 1))}
             disabled={currentStep === 1}
-            className="border-emerald-600 text-emerald-600 hover:bg-emerald-50"
+            className="px-6 py-2 bg-gray-300 text-gray-700 rounded-lg disabled:opacity-50 hover:bg-gray-400 transition-colors"
           >
-            Voltar
-          </Button>
-
-          {currentStep < 6 ? (
-            <Button
-              onClick={handleNext}
-              className="bg-emerald-600 hover:bg-emerald-700"
-            >
-              Próximo
-            </Button>
-          ) : (
-            <div className="flex gap-2">
-              <Button
-                variant="outline"
-                onClick={() => setCurrentStep(1)}
-                className="border-emerald-600 text-emerald-600 hover:bg-emerald-50"
-              >
-                Nova Simulação
-              </Button>
-            </div>
-          )}
+            Anterior
+          </button>
+          <button
+            onClick={() => setCurrentStep(Math.min(6, currentStep + 1))}
+            disabled={currentStep === 6}
+            className="px-6 py-2 bg-emerald-600 text-white rounded-lg disabled:opacity-50 hover:bg-emerald-700 transition-colors"
+          >
+            Próximo
+          </button>
         </div>
       </div>
-
-      <footer className="bg-emerald-600 text-white py-4 mt-12">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center">
-            <p className="text-sm">
-              © 2024 Secretaria-Geral de Governo de Goiás - Sistema de Calculadora UST
-            </p>
-            <p className="text-xs text-gray-200 mt-1">
-              Desenvolvido para apoio à gestão de contratos de TI
-            </p>
-          </div>
-        </div>
-      </footer>
     </div>
   );
 };

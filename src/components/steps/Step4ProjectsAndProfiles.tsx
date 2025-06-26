@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -8,18 +7,20 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Badge } from '@/components/ui/badge';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Plus, Edit, X, Copy } from 'lucide-react';
-import { Project, ProfessionalProfile, DefaultSquad } from '@/types/calculator';
+import { Project, ProfessionalProfile, DefaultSquad, SquadComposition } from '@/types/calculator';
 
 interface Step4ProjectsAndProfilesProps {
   projects: Project[];
   profiles: ProfessionalProfile[];
   selectedProfileIds: string[];
+  squads: SquadComposition[];
   onAddProject: (project: Omit<Project, 'id'>) => void;
   onUpdateProject: (id: string, project: Partial<Project>) => void;
   onDeleteProject: (id: string) => void;
   onToggleProfileSelection: (profileId: string) => void;
   onSelectAllProfiles: () => void;
   onDeselectAllProfiles: () => void;
+  onAddSquadComposition: (squad: Omit<SquadComposition, 'id'>) => void;
 }
 
 const defaultSquads: DefaultSquad[] = [
@@ -74,12 +75,14 @@ const Step4ProjectsAndProfiles: React.FC<Step4ProjectsAndProfilesProps> = ({
   projects,
   profiles,
   selectedProfileIds,
+  squads,
   onAddProject,
   onUpdateProject,
   onDeleteProject,
   onToggleProfileSelection,
   onSelectAllProfiles,
-  onDeselectAllProfiles
+  onDeselectAllProfiles,
+  onAddSquadComposition
 }) => {
   const [isAddingProject, setIsAddingProject] = useState(false);
   const [newProject, setNewProject] = useState<Omit<Project, 'id'>>({
@@ -108,6 +111,28 @@ const Step4ProjectsAndProfiles: React.FC<Step4ProjectsAndProfilesProps> = ({
       const matchingProfile = profiles.find(p => p.name === defaultProfile.profileName);
       if (matchingProfile && !selectedProfileIds.includes(matchingProfile.id)) {
         onToggleProfileSelection(matchingProfile.id);
+      }
+    });
+
+    // Add squad compositions for each profile in the default squad
+    squad.profiles.forEach(defaultProfile => {
+      const matchingProfile = profiles.find(p => p.name === defaultProfile.profileName);
+      if (matchingProfile) {
+        // Check if this squad composition already exists
+        const existingSquad = squads.find(s => 
+          s.profileId === matchingProfile.id && 
+          s.type === squad.type && 
+          s.complexity === squad.complexity
+        );
+
+        if (!existingSquad) {
+          onAddSquadComposition({
+            profileId: matchingProfile.id,
+            quantity: defaultProfile.quantity,
+            type: squad.type,
+            complexity: squad.complexity
+          });
+        }
       }
     });
   };
@@ -337,7 +362,7 @@ const Step4ProjectsAndProfiles: React.FC<Step4ProjectsAndProfilesProps> = ({
               Squads Padrão para Projetos
             </h3>
             <div className="text-sm text-emerald-600">
-              Clique em "Aplicar Squad" para selecionar automaticamente os perfis necessários
+              Clique em "Aplicar Squad" para selecionar automaticamente os perfis e criar as composições
             </div>
           </div>
           
@@ -423,7 +448,7 @@ const Step4ProjectsAndProfiles: React.FC<Step4ProjectsAndProfilesProps> = ({
         <div className="bg-emerald-50 p-4 rounded-lg border border-emerald-200">
           <p className="text-sm text-emerald-800">
             <strong>Observação:</strong> Os squads padrão mostram a composição recomendada para cada tipo e complexidade de projeto. 
-            Use o botão "Aplicar Squad" para selecionar automaticamente os perfis necessários ou faça sua própria seleção manual.
+            Use o botão "Aplicar Squad" para selecionar automaticamente os perfis necessários e criar as composições de squad correspondentes.
           </p>
         </div>
       </CardContent>
