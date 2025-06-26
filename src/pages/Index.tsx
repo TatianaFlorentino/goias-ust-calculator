@@ -1,7 +1,7 @@
 
 import React from 'react';
-import { Header } from '@/components/Header';
-import { StepIndicator } from '@/components/StepIndicator';
+import Header from '@/components/Header';
+import StepIndicator from '@/components/StepIndicator';
 import { useCalculator } from '@/hooks/useCalculator';
 import Step1PersonalInfo from '@/components/steps/Step1PersonalInfo';
 import Step2GeneralParams from '@/components/steps/Step2GeneralParams';
@@ -33,19 +33,30 @@ const Index = () => {
     calculateResults
   } = useCalculator();
 
+  const stepNames = [
+    'Informações Pessoais',
+    'Parâmetros Gerais',
+    'Parâmetros Gerais',
+    'Projetos e Perfis',
+    'Formato dos Squads',
+    'Resumo Geral'
+  ];
+
   const renderCurrentStep = () => {
     switch (currentStep) {
       case 1:
         return (
           <Step1PersonalInfo
-            personalInfo={calculatorData.personalInfo}
-            onUpdatePersonalInfo={updatePersonalInfo}
+            data={calculatorData.personalInfo}
+            onChange={updatePersonalInfo}
           />
         );
       case 2:
         return (
           <Step2GeneralParams
+            data={calculatorData.generalParams}
             profiles={calculatorData.profiles}
+            onChange={updateGeneralParams}
             onAddProfile={addProfile}
             onUpdateProfile={updateProfile}
             onDeleteProfile={deleteProfile}
@@ -54,8 +65,8 @@ const Index = () => {
       case 3:
         return (
           <Step3GeneralParams
-            generalParams={calculatorData.generalParams}
-            onUpdateGeneralParams={updateGeneralParams}
+            data={calculatorData.generalParams}
+            onChange={updateGeneralParams}
           />
         );
       case 4:
@@ -89,8 +100,9 @@ const Index = () => {
       case 6:
         return (
           <Step5Summary
-            calculatorData={calculatorData}
-            calculationResults={calculateResults()}
+            results={calculateResults()}
+            personalInfo={calculatorData.personalInfo}
+            generalParams={calculatorData.generalParams}
           />
         );
       default:
@@ -102,7 +114,11 @@ const Index = () => {
     <div className="min-h-screen bg-gray-50">
       <Header />
       <div className="container mx-auto px-4 py-8">
-        <StepIndicator currentStep={currentStep} totalSteps={6} />
+        <StepIndicator 
+          currentStep={currentStep} 
+          totalSteps={6} 
+          stepNames={stepNames}
+        />
         <div className="mt-8">
           {renderCurrentStep()}
         </div>
