@@ -1,10 +1,9 @@
-
 import React from 'react';
 import Header from '@/components/Header';
 import StepIndicator from '@/components/StepIndicator';
 import { useCalculator } from '@/hooks/useCalculator';
 import Step1PersonalInfo from '@/components/steps/Step1PersonalInfo';
-import Step2GeneralParams from '@/components/steps/Step2GeneralParams';
+import Step2ProfileFCP from '@/components/steps/Step2ProfileFCP';
 import Step3GeneralParams from '@/components/steps/Step3GeneralParams';
 import Step4ProjectsAndProfiles from '@/components/steps/Step4ProjectsAndProfiles';
 import Step4SquadComposition from '@/components/steps/Step4SquadComposition';
@@ -35,7 +34,7 @@ const Index = () => {
 
   const stepNames = [
     'Informações Pessoais',
-    'Parâmetros Gerais',
+    'Cadastro de Perfis FCP',
     'Parâmetros Gerais',
     'Projetos e Perfis',
     'Formato dos Squads',
@@ -53,10 +52,8 @@ const Index = () => {
         );
       case 2:
         return (
-          <Step2GeneralParams
-            data={calculatorData.generalParams}
+          <Step2ProfileFCP
             profiles={calculatorData.profiles}
-            onChange={updateGeneralParams}
             onAddProfile={addProfile}
             onUpdateProfile={updateProfile}
             onDeleteProfile={deleteProfile}
