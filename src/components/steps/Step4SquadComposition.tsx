@@ -1,11 +1,11 @@
-
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Plus, Zap } from 'lucide-react';
+import { Plus, Zap, Users } from 'lucide-react';
 import { ProfessionalProfile, SquadComposition, Project } from '@/types/calculator';
 import SquadFormModal from './squad-composition/SquadFormModal';
 import SquadGroupCard from './squad-composition/SquadGroupCard';
+import ProfileSummaryCards from './squad-composition/ProfileSummaryCards';
 import { defaultSquads } from './project-profiles/defaultSquads';
 
 interface Step4SquadCompositionProps {
@@ -28,9 +28,26 @@ const Step4SquadComposition: React.FC<Step4SquadCompositionProps> = ({
   onDeleteSquad
 }) => {
   const [isAddingSquad, setIsAddingSquad] = useState(false);
+  const [showDefaultSquadPreview, setShowDefaultSquadPreview] = useState(false);
 
   // Filtrar apenas os perfis selecionados
   const availableProfiles = profiles.filter(profile => selectedProfileIds.includes(profile.id));
+
+  // Verificar se existem squads padrão que podem ser aplicados
+  const canApplyDefaultSquads = defaultSquads.some(squad => 
+    squad.profiles.some(defaultProfile => 
+      profiles.some(p => p.name === defaultProfile.profileName)
+    )
+  );
+
+  // Mostrar preview dos squads padrão automaticamente se não houver squads criados
+  useEffect(() => {
+    if (squads.length === 0 && canApplyDefaultSquads && projects.length > 0) {
+      setShowDefaultSquadPreview(true);
+    } else {
+      setShowDefaultSquadPreview(false);
+    }
+  }, [squads.length, canApplyDefaultSquads, projects.length]);
 
   // Agrupar squads por tipo e complexidade
   const groupedSquads = squads.reduce((groups, squad) => {
@@ -93,6 +110,99 @@ const Step4SquadComposition: React.FC<Step4SquadCompositionProps> = ({
         }
       });
     });
+    setShowDefaultSquadPreview(false);
+  };
+
+  const renderDefaultSquadPreview = () => {
+    if (!showDefaultSquadPreview) return null;
+
+    return (
+      <div className="space-y-6">
+        <div className="bg-gradient-to-r from-blue-50 to-indigo-50 p-6 rounded-lg border border-blue-200">
+          <div className="flex items-center gap-3 mb-4">
+            <Users className="w-6 h-6 text-blue-600" />
+            <h3 className="text-xl font-semibold text-blue-800">
+              Preview dos Squads Padrão Disponíveis
+            </h3>
+          </div>
+          <p className="text-blue-700 mb-4">
+            Estas são as composições recomendadas que serão criadas automaticamente:
+          </p>
+        </div>
+
+        {defaultSquads.map((squad, index) => {
+          const availableProfilesForSquad = squad.profiles.filter(defaultProfile =>
+            profiles.some(p => p.name === defaultProfile.profileName)
+          );
+
+          if (availableProfilesForSquad.length === 0) return null;
+
+          const squadTitle = `Projeto - Complexidade ${squad.complexity.charAt(0).toUpperCase() + squad.complexity.slice(1)}`;
+          const totalUST = availableProfilesForSquad.reduce((sum, prof) => {
+            const profile = profiles.find(p => p.name === prof.profileName);
+            return sum + (profile ? prof.quantity * profile.fcp * 40 : 0);
+          }, 0);
+
+          return (
+            <Card key={index} className="border-blue-200 bg-blue-50/30">
+              <CardHeader className="bg-blue-100">
+                <div className="flex justify-between items-center">
+                  <CardTitle className="text-lg text-blue-800">{squadTitle}</CardTitle>
+                  <div className="text-sm text-blue-700 text-right">
+                    <div>Total UST/Semana: <span className="font-bold">{totalUST.toFixed(0)}</span></div>
+                    <div>Duração Recomendada: <span className="font-bold">{squad.duration} semanas</span></div>
+                  </div>
+                </div>
+              </CardHeader>
+              <CardContent className="p-4">
+                <h5 className="font-medium text-blue-800 mb-3">Composição do Squad:</h5>
+                <div className="space-y-3">
+                  {availableProfilesForSquad.map((defaultProfile, profIndex) => {
+                    const profile = profiles.find(p => p.name === defaultProfile.profileName);
+                    if (!profile) return null;
+
+                    return (
+                      <div key={profIndex} className="flex items-center justify-between p-3 border border-blue-200 rounded-lg bg-white">
+                        <div className="flex-1">
+                          <h6 className="font-medium text-blue-800 mb-1">
+                            {profile.name}
+                          </h6>
+                          <div className="grid grid-cols-3 gap-4 text-sm">
+                            <div>
+                              <span className="text-gray-600">Quantidade:</span>
+                              <p className="font-medium">{defaultProfile.quantity}</p>
+                            </div>
+                            <div>
+                              <span className="text-gray-600">FCP:</span>
+                              <p className="font-medium">{profile.fcp}</p>
+                            </div>
+                            <div>
+                              <span className="text-gray-600">UST/Semana:</span>
+                              <p className="font-medium">{(defaultProfile.quantity * profile.fcp * 40).toFixed(0)}</p>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              </CardContent>
+            </Card>
+          );
+        })}
+
+        <div className="text-center">
+          <Button
+            onClick={applyAllDefaultSquads}
+            size="lg"
+            className="bg-emerald-600 hover:bg-emerald-700"
+          >
+            <Zap className="w-5 h-5 mr-2" />
+            Aplicar Todos os Squads Padrão
+          </Button>
+        </div>
+      </div>
+    );
   };
 
   if (availableProfiles.length === 0) {
@@ -152,115 +262,117 @@ const Step4SquadComposition: React.FC<Step4SquadCompositionProps> = ({
       <CardHeader className="text-center bg-gradient-to-r from-emerald-600 to-emerald-700 text-white rounded-t-lg">
         <CardTitle className="text-2xl">Etapa 05 - Formato dos Squads</CardTitle>
         <CardDescription className="text-gray-100">
-          Gerencie as composições de squad criadas automaticamente ou adicione novas
+          {showDefaultSquadPreview 
+            ? "Visualize e aplique as composições de squad recomendadas"
+            : "Gerencie as composições de squad criadas automaticamente ou adicione novas"
+          }
         </CardDescription>
       </CardHeader>
       <CardContent className="space-y-6 p-6">
-        {/* Mostrar perfis selecionados */}
-        <div className="bg-green-50 p-4 rounded-lg border border-green-200">
-          <h3 className="text-lg font-medium text-green-800 mb-3">
-            Perfis Selecionados ({availableProfiles.length})
-          </h3>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-2">
-            {availableProfiles.map((profile) => (
-              <div key={profile.id} className="bg-white p-2 rounded-md border border-green-100">
-                <div className="text-sm font-medium text-green-900">{profile.name}</div>
-                <div className="text-xs text-green-700">FCP: {profile.fcp}</div>
-              </div>
-            ))}
-          </div>
-        </div>
+        <ProfileSummaryCards 
+          availableProfiles={availableProfiles}
+          projects={projects}
+        />
 
-        {/* Lista de Projetos Cadastrados */}
-        <div className="bg-blue-50 p-4 rounded-lg border border-blue-200">
-          <h3 className="text-lg font-medium text-blue-800 mb-3">
-            Projetos Disponíveis ({projects.length})
-          </h3>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3 mb-4">
-            {projects.map((project) => (
-              <div key={project.id} className="bg-white p-3 rounded-md border border-blue-100">
-                <h4 className="font-medium text-blue-900 mb-2">{project.name}</h4>
-                <div className="text-sm text-blue-700 space-y-1">
-                  <div><strong>Tipo:</strong> {getTypeLabel(project.type)}</div>
-                  <div><strong>Complexidade:</strong> {getComplexityLabel(project.complexity)}</div>
-                  <div><strong>Duração:</strong> {project.duration} semanas</div>
+        {/* Preview dos Squads Padrão */}
+        {renderDefaultSquadPreview()}
+
+        {/* Conteúdo existente quando há squads criados */}
+        {!showDefaultSquadPreview && (
+          <>
+            {/* Lista de Projetos Cadastrados */}
+            <div className="bg-blue-50 p-4 rounded-lg border border-blue-200">
+              <h3 className="text-lg font-medium text-blue-800 mb-3">
+                Projetos Disponíveis ({projects.length})
+              </h3>
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3 mb-4">
+                {projects.map((project) => (
+                  <div key={project.id} className="bg-white p-3 rounded-md border border-blue-100">
+                    <h4 className="font-medium text-blue-900 mb-2">{project.name}</h4>
+                    <div className="text-sm text-blue-700 space-y-1">
+                      <div><strong>Tipo:</strong> {getTypeLabel(project.type)}</div>
+                      <div><strong>Complexidade:</strong> {getComplexityLabel(project.complexity)}</div>
+                      <div><strong>Duração:</strong> {project.duration} semanas</div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+              <div className="flex gap-2">
+                <Button
+                  onClick={applyAllDefaultSquads}
+                  className="bg-emerald-600 hover:bg-emerald-700"
+                >
+                  <Zap className="w-4 h-4 mr-2" />
+                  Aplicar Squads Padrão (Baixa, Média, Alta)
+                </Button>
+                <Button
+                  onClick={() => setIsAddingSquad(true)}
+                  variant="outline"
+                  className="border-blue-600 text-blue-600 hover:bg-blue-50"
+                >
+                  <Plus className="w-4 h-4 mr-2" />
+                  Criar Squad Personalizado
+                </Button>
+              </div>
+            </div>
+
+            <div className="flex justify-between items-center">
+              <h3 className="text-lg font-medium text-emerald-700">
+                Composições de Squad ({squads.length})
+              </h3>
+            </div>
+
+            {isAddingSquad && (
+              <SquadFormModal
+                availableProfiles={availableProfiles}
+                availableProjects={projects}
+                onAddSquad={onAddSquad}
+                onCancel={() => setIsAddingSquad(false)}
+              />
+            )}
+
+            <div className="space-y-6">
+              {Object.entries(groupedSquads).map(([groupKey, groupSquads]) => (
+                <SquadGroupCard
+                  key={groupKey}
+                  groupKey={groupKey}
+                  squads={groupSquads}
+                  projects={groupedProjects[groupKey] || []}
+                  profiles={profiles}
+                  onDeleteSquad={onDeleteSquad}
+                />
+              ))}
+            </div>
+
+            {squads.length === 0 && (
+              <div className="text-center py-8">
+                <div className="bg-emerald-50 p-6 rounded-lg border border-emerald-200">
+                  <h3 className="text-lg font-medium text-emerald-800 mb-2">
+                    Nenhuma composição de squad criada ainda
+                  </h3>
+                  <p className="text-emerald-700 mb-4">
+                    Use o botão "Aplicar Squads Padrão" para criar automaticamente as composições 
+                    para projetos de baixa, média e alta complexidade.
+                  </p>
+                  <Button
+                    onClick={applyAllDefaultSquads}
+                    className="bg-emerald-600 hover:bg-emerald-700"
+                  >
+                    <Zap className="w-4 h-4 mr-2" />
+                    Aplicar Squads Padrão Agora
+                  </Button>
                 </div>
               </div>
-            ))}
-          </div>
-          <div className="flex gap-2">
-            <Button
-              onClick={applyAllDefaultSquads}
-              className="bg-emerald-600 hover:bg-emerald-700"
-            >
-              <Zap className="w-4 h-4 mr-2" />
-              Aplicar Squads Padrão (Baixa, Média, Alta)
-            </Button>
-            <Button
-              onClick={() => setIsAddingSquad(true)}
-              variant="outline"
-              className="border-blue-600 text-blue-600 hover:bg-blue-50"
-            >
-              <Plus className="w-4 h-4 mr-2" />
-              Criar Squad Personalizado
-            </Button>
-          </div>
-        </div>
-
-        <div className="flex justify-between items-center">
-          <h3 className="text-lg font-medium text-emerald-700">
-            Composições de Squad ({squads.length})
-          </h3>
-        </div>
-
-        {isAddingSquad && (
-          <SquadFormModal
-            availableProfiles={availableProfiles}
-            availableProjects={projects}
-            onAddSquad={onAddSquad}
-            onCancel={() => setIsAddingSquad(false)}
-          />
-        )}
-
-        <div className="space-y-6">
-          {Object.entries(groupedSquads).map(([groupKey, groupSquads]) => (
-            <SquadGroupCard
-              key={groupKey}
-              groupKey={groupKey}
-              squads={groupSquads}
-              projects={groupedProjects[groupKey] || []}
-              profiles={profiles}
-              onDeleteSquad={onDeleteSquad}
-            />
-          ))}
-        </div>
-
-        {squads.length === 0 && (
-          <div className="text-center py-8">
-            <div className="bg-emerald-50 p-6 rounded-lg border border-emerald-200">
-              <h3 className="text-lg font-medium text-emerald-800 mb-2">
-                Nenhuma composição de squad criada ainda
-              </h3>
-              <p className="text-emerald-700 mb-4">
-                Use o botão "Aplicar Squads Padrão" para criar automaticamente as composições 
-                para projetos de baixa, média e alta complexidade.
-              </p>
-              <Button
-                onClick={applyAllDefaultSquads}
-                className="bg-emerald-600 hover:bg-emerald-700"
-              >
-                <Zap className="w-4 h-4 mr-2" />
-                Aplicar Squads Padrão Agora
-              </Button>
-            </div>
-          </div>
+            )}
+          </>
         )}
 
         <div className="bg-emerald-50 p-4 rounded-lg border border-emerald-200">
           <p className="text-sm text-emerald-800">
-            <strong>Dica:</strong> Use "Aplicar Squads Padrão" para criar automaticamente as composições 
-            recomendadas para projetos de baixa, média e alta complexidade. Você pode editar ou adicionar 
-            novas composições conforme necessário.
+            <strong>Dica:</strong> {showDefaultSquadPreview 
+              ? "Visualize as composições recomendadas acima e clique em 'Aplicar Todos os Squads Padrão' para criar automaticamente todas as composições."
+              : "Use 'Aplicar Squads Padrão' para criar automaticamente as composições recomendadas para projetos de baixa, média e alta complexidade. Você pode editar ou adicionar novas composições conforme necessário."
+            }
           </p>
         </div>
       </CardContent>
