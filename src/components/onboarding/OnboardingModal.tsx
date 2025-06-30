@@ -1,9 +1,8 @@
-
 import React, { useState } from 'react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { ChevronLeft, ChevronRight, X, Calculator, Users, Settings, FolderOpen, Target, FileText } from 'lucide-react';
+import { ChevronLeft, ChevronRight, X, Calculator, Users, Settings, FolderOpen, Target, FileText, Shield } from 'lucide-react';
 
 interface OnboardingModalProps {
   isOpen: boolean;
@@ -15,29 +14,43 @@ const OnboardingModal: React.FC<OnboardingModalProps> = ({ isOpen, onClose }) =>
 
   const onboardingSteps = [
     {
-      title: "Bem-vindo à Calculadora UST",
+      title: "Bem-vindo à Calculadora UST da SGG",
       icon: Calculator,
       content: (
         <div className="space-y-4">
-          <p className="text-gray-700">
-            A Calculadora UST é uma ferramenta desenvolvida para auxiliar na estimativa de custos 
-            de contratos de TI do Estado de Goiás.
-          </p>
           <div className="bg-emerald-50 p-4 rounded-lg border border-emerald-200">
-            <h4 className="font-semibold text-emerald-800 mb-2">O que é UST?</h4>
+            <h4 className="font-semibold text-emerald-800 mb-2">Secretaria de Gestão Governamental</h4>
             <p className="text-sm text-emerald-700">
-              UST (Unidade de Serviços Técnicos) é uma métrica padronizada para calcular 
-              o custo de serviços de TI baseada no perfil profissional e complexidade do projeto.
+              Ferramenta oficial desenvolvida pela SGG em conformidade com as diretrizes 
+              do CALCTI (Comitê de Avaliação de Licenças de Contratos de TI) do Estado de Goiás.
             </p>
           </div>
+          
+          <div className="bg-blue-50 p-4 rounded-lg border border-blue-200">
+            <h4 className="font-semibold text-blue-800 mb-2">Objetivo da Ferramenta</h4>
+            <p className="text-sm text-blue-700">
+              Padronizar e automatizar o cálculo de custos em contratos de TI para órgãos 
+              estaduais, utilizando a metodologia UST (Unidades de Serviços Técnicos).
+            </p>
+          </div>
+
+          <div className="bg-yellow-50 p-4 rounded-lg border border-yellow-200">
+            <h4 className="font-semibold text-yellow-800 mb-2">Importante - Uso Gratuito</h4>
+            <p className="text-sm text-yellow-700">
+              Esta ferramenta é <strong>100% gratuita</strong> para órgãos do Estado de Goiás. 
+              Não deve ser comercializada ou utilizada para fins lucrativos, sendo destinada 
+              exclusivamente ao auxílio na gestão pública.
+            </p>
+          </div>
+
           <div className="grid grid-cols-2 gap-4">
-            <div className="text-center p-3 bg-blue-50 rounded-lg">
-              <div className="text-2xl font-bold text-blue-600">6</div>
-              <div className="text-sm text-blue-700">Etapas do Processo</div>
+            <div className="text-center p-3 bg-emerald-50 rounded-lg">
+              <div className="text-2xl font-bold text-emerald-600">6</div>
+              <div className="text-sm text-emerald-700">Etapas Guiadas</div>
             </div>
-            <div className="text-center p-3 bg-purple-50 rounded-lg">
-              <div className="text-2xl font-bold text-purple-600">100%</div>
-              <div className="text-sm text-purple-700">Automatizado</div>
+            <div className="text-center p-3 bg-blue-50 rounded-lg">
+              <div className="text-2xl font-bold text-blue-600">R$ 70</div>
+              <div className="text-sm text-blue-700">Valor Padrão UST</div>
             </div>
           </div>
         </div>
@@ -172,7 +185,6 @@ const OnboardingModal: React.FC<OnboardingModalProps> = ({ isOpen, onClose }) =>
               <ul className="text-sm text-gray-600 mt-1 space-y-1">
                 <li>• <strong>Projeto:</strong> Desenvolvimento de novos sistemas</li>
                 <li>• <strong>Sustentação:</strong> Manutenção de sistemas existentes</li>
-                <li>• <strong>Gestão:</strong> Coordenação e gerenciamento</li>
               </ul>
             </div>
             <div className="border-l-4 border-purple-500 pl-3">
@@ -256,6 +268,17 @@ const OnboardingModal: React.FC<OnboardingModalProps> = ({ isOpen, onClose }) =>
           <div className="bg-gradient-to-r from-emerald-500 to-emerald-600 text-white p-3 rounded-lg">
             <h5 className="font-medium">Fórmula Final</h5>
             <p className="text-sm opacity-90">UST = FCP × Horas Semanais × Duração × Valor UST</p>
+          </div>
+          <div className="bg-red-50 p-3 rounded-lg border border-red-200">
+            <div className="flex items-start space-x-2">
+              <Shield className="w-4 h-4 text-red-600 mt-0.5" />
+              <div>
+                <h5 className="font-medium text-red-800">Conformidade CALCTI</h5>
+                <p className="text-sm text-red-700">
+                  Todos os cálculos seguem rigorosamente as normas estabelecidas pelo CALCTI/GO.
+                </p>
+              </div>
+            </div>
           </div>
         </div>
       )
