@@ -22,7 +22,7 @@ const OnboardingModal: React.FC<OnboardingModalProps> = ({ isOpen, onClose }) =>
             <h4 className="font-semibold text-emerald-800 mb-2">Secretaria de Gestão Governamental</h4>
             <p className="text-sm text-emerald-700">
               Ferramenta oficial desenvolvida pela SGG em conformidade com as diretrizes 
-              do CALCTI (Comitê de Avaliação de Licenças de Contratos de TI) do Estado de Goiás.
+              do CACTIC (Comitê de Avaliação de Licenças de Contratos de TI) do Estado de Goiás.
             </p>
           </div>
           
@@ -273,9 +273,9 @@ const OnboardingModal: React.FC<OnboardingModalProps> = ({ isOpen, onClose }) =>
             <div className="flex items-start space-x-2">
               <Shield className="w-4 h-4 text-red-600 mt-0.5" />
               <div>
-                <h5 className="font-medium text-red-800">Conformidade CALCTI</h5>
+                <h5 className="font-medium text-red-800">Conformidade CACTIC</h5>
                 <p className="text-sm text-red-700">
-                  Todos os cálculos seguem rigorosamente as normas estabelecidas pelo CALCTI/GO.
+                  Todos os cálculos seguem rigorosamente as normas estabelecidas pelo CACTIC/GO.
                 </p>
               </div>
             </div>

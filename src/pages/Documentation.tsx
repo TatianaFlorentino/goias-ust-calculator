@@ -82,7 +82,7 @@ const Documentation = () => {
                 <p className="text-gray-700">
                   A Calculadora UST é uma ferramenta oficial desenvolvida pela Secretaria de Gestão Governamental (SGG) 
                   do Estado de Goiás, em conformidade com as diretrizes estabelecidas pelo Comitê de Avaliação de 
-                  Licenças de Contratos de TI (CALCTI).
+                  Licenças de Contratos de TI (CACTIC).
                 </p>
                 
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
@@ -140,7 +140,7 @@ const Documentation = () => {
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div className="border-l-4 border-emerald-500 pl-4">
                       <h4 className="font-medium">Valor Padrão da UST</h4>
-                      <p className="text-sm text-gray-600 mt-1">R$ 70,00 por UST (conforme CALCTI)</p>
+                      <p className="text-sm text-gray-600 mt-1">R$ 70,00 por UST (conforme CACTIC)</p>
                     </div>
                     <div className="border-l-4 border-blue-500 pl-4">
                       <h4 className="font-medium">Carga Horária</h4>
@@ -230,6 +230,21 @@ const Documentation = () => {
                   </div>
                 </div>
 
+                <div className="bg-blue-50 p-4 rounded-lg border border-blue-200">
+                  <div className="flex items-start space-x-3">
+                    <Info className="w-5 h-5 text-blue-600 mt-0.5" />
+                    <div>
+                      <h4 className="font-semibold text-blue-800">Observação Importante</h4>
+                      <p className="text-sm text-blue-700 mt-2">
+                        A CACTIC poderá definir composições-padrão de squads de projetos para cada nível de complexidade. 
+                        Alternativamente, o órgão poderá apresentar propostas próprias de composição, conforme suas 
+                        necessidades específicas. Caso não haja manifestação, prevalecerá a configuração padrão 
+                        definida pela CACTIC.
+                      </p>
+                    </div>
+                  </div>
+                </div>
+
                 <div className="bg-red-50 p-4 rounded-lg border border-red-200">
                   <div className="flex items-start space-x-3">
                     <AlertCircle className="w-5 h-5 text-red-600 mt-0.5" />
@@ -239,7 +254,7 @@ const Documentation = () => {
                         <li>• Uso exclusivo para órgãos do Estado de Goiás</li>
                         <li>• Proibida comercialização ou uso para fins lucrativos</li>
                         <li>• Valores calculados devem ser validados pelos órgãos competentes</li>
-                        <li>• Ferramenta deve ser utilizada conforme metodologia CALCTI</li>
+                        <li>• Ferramenta deve ser utilizada conforme metodologia CACTIC</li>
                       </ul>
                     </div>
                   </div>
@@ -254,7 +269,7 @@ const Documentation = () => {
               <CardHeader>
                 <CardTitle className="flex items-center space-x-2">
                   <Zap className="w-5 h-5 text-emerald-600" />
-                  <span>Metodologia CALCTI</span>
+                  <span>Metodologia CACTIC</span>
                 </CardTitle>
                 <CardDescription>
                   Fundamentos teóricos e metodológicos da calculadora
@@ -344,7 +359,7 @@ const Documentation = () => {
                   details: [
                     "Cadastro de perfis necessários para o projeto",
                     "Definição do Fator de Complexidade (FCP) para cada perfil",
-                    "Validação dos valores conforme padrões CALCTI"
+                    "Validação dos valores conforme padrões CACTIC"
                   ]
                 },
                 {

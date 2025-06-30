@@ -12,7 +12,7 @@ const LandingPage = () => {
     {
       icon: Calculator,
       title: "Cálculo Automatizado de UST",
-      description: "Calcule automaticamente as Unidades de Serviços Técnicos baseado nos padrões CALCTI do Estado de Goiás"
+      description: "Calcule automaticamente as Unidades de Serviços Técnicos baseado nos padrões CACTIC do Estado de Goiás"
     },
     {
       icon: Users,
@@ -37,13 +37,13 @@ const LandingPage = () => {
     {
       icon: Shield,
       title: "Conformidade Garantida",
-      description: "Aderente às normas e padrões estabelecidos pelo CALCTI/GO"
+      description: "Aderente às normas e padrões estabelecidos pelo CACTIC/GO"
     }
   ];
 
   const benefits = [
     "Ferramenta 100% gratuita para órgãos do Estado de Goiás",
-    "Cálculos baseados em metodologia validada pelo CALCTI",
+    "Cálculos baseados em metodologia validada pelo CACTIC",
     "Interface intuitiva e processo guiado em 6 etapas",
     "Suporte a projetos de desenvolvimento e sustentação",
     "Composições de squad flexíveis e personalizáveis",
@@ -96,7 +96,7 @@ const LandingPage = () => {
             </h1>
             <p className="text-xl text-gray-700 mb-8 leading-relaxed">
               Ferramenta oficial da Secretaria de Gestão Governamental para cálculo automatizado 
-              de Unidades de Serviços Técnicos em contratos de TI, seguindo os padrões estabelecidos pelo CALCTI.
+              de Unidades de Serviços Técnicos em contratos de TI, seguindo os padrões estabelecidos pelo CACTIC.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <Button 
@@ -164,7 +164,7 @@ const LandingPage = () => {
                 Por que usar a Calculadora UST?
               </h2>
               <p className="text-gray-700 mb-8">
-                Desenvolvida pela SGG em parceria com o CALCTI, esta ferramenta foi criada 
+                Desenvolvida pela SGG em parceria com o CACTIC, esta ferramenta foi criada 
                 especificamente para simplificar e padronizar o processo de cálculo de custos 
                 em contratos de TI no Estado de Goiás.
               </p>
@@ -179,7 +179,7 @@ const LandingPage = () => {
             </div>
             <div className="bg-white p-8 rounded-2xl shadow-lg">
               <h3 className="text-xl font-semibold text-gray-900 mb-4">
-                Metodologia CALCTI
+                Metodologia CACTIC
               </h3>
               <p className="text-gray-600 mb-6">
                 Nossa calculadora implementa integralmente a metodologia estabelecida 
