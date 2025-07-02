@@ -5,7 +5,8 @@ import { useCalculator } from '@/hooks/useCalculator';
 import Step1PersonalInfo from '@/components/steps/Step1PersonalInfo';
 import Step2ProfileFCP from '@/components/steps/Step2ProfileFCP';
 import Step3GeneralParams from '@/components/steps/Step3GeneralParams';
-import Step4Summary from '@/components/steps/Step4Summary';
+import Step4SquadComposition from '@/components/steps/Step4SquadComposition';
+import Step5Summary from '@/components/steps/Step5Summary';
 
 const Index = () => {
   const {
@@ -34,6 +35,7 @@ const Index = () => {
     'Informações Pessoais',
     'Cadastro de Perfis',
     'Parâmetros Gerais',
+    'Composição de Squad',
     'Resultado do Cálculo'
   ];
 
@@ -64,7 +66,21 @@ const Index = () => {
         );
       case 4:
         return (
-          <Step4Summary
+          <Step4SquadComposition
+            profiles={calculatorData.profiles}
+            selectedProfileIds={selectedProfileIds}
+            squads={calculatorData.squads}
+            onToggleProfileSelection={toggleProfileSelection}
+            onSelectAllProfiles={selectAllProfiles}
+            onDeselectAllProfiles={deselectAllProfiles}
+            onAddSquadComposition={addSquadComposition}
+            onUpdateSquadComposition={updateSquadComposition}
+            onDeleteSquadComposition={deleteSquadComposition}
+          />
+        );
+      case 5:
+        return (
+          <Step5Summary
             results={calculateResults()}
             personalInfo={calculatorData.personalInfo}
             generalParams={calculatorData.generalParams}
@@ -86,7 +102,7 @@ const Index = () => {
       <div className="container mx-auto px-4 py-8">
         <StepIndicator 
           currentStep={currentStep} 
-          totalSteps={4} 
+          totalSteps={5} 
           stepNames={stepNames}
         />
         <div className="mt-8">
@@ -101,8 +117,8 @@ const Index = () => {
             Anterior
           </button>
           <button
-            onClick={() => setCurrentStep(Math.min(4, currentStep + 1))}
-            disabled={currentStep === 4}
+            onClick={() => setCurrentStep(Math.min(5, currentStep + 1))}
+            disabled={currentStep === 5}
             className="px-6 py-2 bg-emerald-600 text-white rounded-lg disabled:opacity-50 hover:bg-emerald-700 transition-colors"
           >
             Próximo
