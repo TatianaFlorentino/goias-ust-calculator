@@ -188,6 +188,7 @@ const Step5Summary: React.FC<Step5SummaryProps> = ({
                 <thead>
                   <tr className="border-b border-emerald-500/20">
                     <th className="text-left p-2 font-medium text-emerald-700">Categoria</th>
+                    <th className="text-left p-2 font-medium text-emerald-700">Perfis Selecionados</th>
                     <th className="text-right p-2 font-medium text-emerald-700">Perfis/Semana</th>
                     <th className="text-right p-2 font-medium text-emerald-700">Duração (Sem)</th>
                     <th className="text-right p-2 font-medium text-emerald-700">UST/Semana</th>
@@ -208,6 +209,26 @@ const Step5Summary: React.FC<Step5SummaryProps> = ({
                               <Badge variant="secondary" className="text-xs">
                                 Combinado
                               </Badge>
+                            )}
+                          </div>
+                        </td>
+                        <td className="p-2">
+                          <div className="text-sm">
+                            {result.squadComposition && result.squadComposition.length > 0 ? (
+                              <div className="space-y-1">
+                                {result.squadComposition.slice(0, 2).map((comp, compIndex) => (
+                                  <div key={compIndex} className="text-emerald-700 truncate">
+                                    • {comp.profile} ({comp.quantity})
+                                  </div>
+                                ))}
+                                {result.squadComposition.length > 2 && (
+                                  <div className="text-emerald-600 text-xs">
+                                    +{result.squadComposition.length - 2} mais...
+                                  </div>
+                                )}
+                              </div>
+                            ) : (
+                              <span className="text-gray-500 text-xs">Nenhum perfil</span>
                             )}
                           </div>
                         </td>
@@ -247,7 +268,7 @@ const Step5Summary: React.FC<Step5SummaryProps> = ({
                       {/* Detalhamento da Composição */}
                       {expandedCategories.has(result.category) && result.squadComposition && (
                         <tr className="bg-emerald-50/10">
-                          <td colSpan={8} className="p-4">
+                          <td colSpan={9} className="p-4">
                             <div className="bg-white rounded-lg border border-emerald-500/20 p-4">
                               <h4 className="font-medium text-emerald-700 mb-3">
                                 Composição - {result.category}
@@ -309,6 +330,7 @@ const Step5Summary: React.FC<Step5SummaryProps> = ({
                   ))}
                   <tr className="border-t-2 border-emerald-500/40 bg-emerald-50/10 font-semibold">
                     <td className="p-2 text-emerald-700">TOTAL GERAL</td>
+                    <td className="p-2 text-emerald-700">-</td>
                     <td className="text-right p-2">{totalProfilesPerWeek.toFixed(2)}</td>
                     <td className="text-right p-2">-</td>
                     <td className="text-right p-2">-</td>
