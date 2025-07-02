@@ -6,6 +6,9 @@ import { FileText, Download, ChevronDown, ChevronUp, Plus } from 'lucide-react';
 import { CalculationResult, Project, SquadComposition } from '@/types/calculator';
 import ProjectForm from './project-profiles/ProjectForm';
 import ProjectCard from './project-profiles/ProjectCard';
+import jsPDF from 'jspdf';
+import autoTable from 'jspdf-autotable';
+import * as XLSX from 'xlsx';
 
 interface Step5SummaryProps {
   results: CalculationResult[];
@@ -50,11 +53,136 @@ const Step5Summary: React.FC<Step5SummaryProps> = ({
   };
 
   const exportToPDF = () => {
-    console.log('Exportar para PDF');
+    const doc = new jsPDF();
+    
+    // Cabeçalho institucional
+    doc.setFontSize(16);
+    doc.setFont('helvetica', 'bold');
+    doc.text('SGG/GO - Secretaria de Gestão e Governo', 20, 20);
+    doc.text('Relatório de Cálculo UST/CACTIC', 20, 30);
+    
+    // Informações do responsável
+    doc.setFontSize(12);
+    doc.setFont('helvetica', 'normal');
+    doc.text(`Responsável: ${personalInfo.name}`, 20, 45);
+    doc.text(`E-mail: ${personalInfo.email}`, 20, 52);
+    doc.text(`Órgão: ${personalInfo.organ}`, 20, 59);
+    doc.text(`Data: ${new Date().toLocaleDateString('pt-BR')}`, 20, 66);
+    
+    // Resumo executivo
+    doc.setFontSize(14);
+    doc.setFont('helvetica', 'bold');
+    doc.text('Resumo Executivo', 20, 85);
+    
+    doc.setFontSize(11);
+    doc.setFont('helvetica', 'normal');
+    doc.text(`Total UST: ${totalUST.toLocaleString('pt-BR')}`, 20, 95);
+    doc.text(`Valor Total: R$ ${totalValue.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`, 20, 102);
+    doc.text(`Profissionais/Semana: ${totalProfilesPerWeek.toFixed(1)}`, 20, 109);
+    doc.text(`Valor UST: R$ ${generalParams.ustValue.toFixed(2)}`, 20, 116);
+    
+    // Tabela de resultados
+    const tableData = results.map(result => [
+      result.category,
+      result.squadComposition ? result.squadComposition.map(comp => `${comp.profile} (${comp.quantity})`).join(', ') : 'Nenhum perfil',
+      result.profilesPerWeek.toFixed(2),
+      result.duration.toString(),
+      result.ustPerWeek.toFixed(0),
+      `R$ ${result.valuePerWeek.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`,
+      result.totalUst.toLocaleString('pt-BR'),
+      `R$ ${result.totalValue.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`
+    ]);
+    
+    // Adicionar linha de total
+    tableData.push([
+      'TOTAL GERAL',
+      '-',
+      totalProfilesPerWeek.toFixed(2),
+      '-',
+      '-',
+      '-',
+      totalUST.toLocaleString('pt-BR'),
+      `R$ ${totalValue.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`
+    ]);
+    
+    autoTable(doc, {
+      head: [['Categoria', 'Perfis Selecionados', 'Perfis/Sem', 'Duração', 'UST/Sem', 'R$/Sem', 'Total UST', 'Total R$']],
+      body: tableData,
+      startY: 130,
+      styles: { fontSize: 8 },
+      headStyles: { fillColor: [52, 168, 83] },
+      columnStyles: {
+        2: { halign: 'right' },
+        3: { halign: 'right' },
+        4: { halign: 'right' },
+        5: { halign: 'right' },
+        6: { halign: 'right' },
+        7: { halign: 'right' }
+      }
+    });
+    
+    doc.save(`relatorio-ust-${new Date().toISOString().split('T')[0]}.pdf`);
   };
 
   const exportToExcel = () => {
-    console.log('Exportar para Excel');
+    // Criar planilha
+    const workbook = XLSX.utils.book_new();
+    
+    // Dados do cabeçalho
+    const headerData = [
+      ['SGG/GO - Secretaria de Gestão e Governo'],
+      ['Relatório de Cálculo UST/CACTIC'],
+      [''],
+      [`Responsável: ${personalInfo.name}`],
+      [`E-mail: ${personalInfo.email}`],
+      [`Órgão: ${personalInfo.organ}`],
+      [`Data: ${new Date().toLocaleDateString('pt-BR')}`],
+      [''],
+      ['RESUMO EXECUTIVO'],
+      [`Total UST: ${totalUST.toLocaleString('pt-BR')}`],
+      [`Valor Total: R$ ${totalValue.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`],
+      [`Profissionais/Semana: ${totalProfilesPerWeek.toFixed(1)}`],
+      [`Valor UST: R$ ${generalParams.ustValue.toFixed(2)}`],
+      [''],
+      ['DETALHAMENTO POR CATEGORIA'],
+      ['Categoria', 'Perfis Selecionados', 'Perfis/Semana', 'Duração (Sem)', 'UST/Semana', 'R$/Semana', 'Total (UST)', 'Total (R$)']
+    ];
+    
+    // Dados dos resultados
+    const resultData = results.map(result => [
+      result.category,
+      result.squadComposition ? result.squadComposition.map(comp => `${comp.profile} (${comp.quantity})`).join(', ') : 'Nenhum perfil',
+      result.profilesPerWeek.toFixed(2),
+      result.duration,
+      result.ustPerWeek.toFixed(0),
+      result.valuePerWeek.toFixed(2),
+      result.totalUst,
+      result.totalValue.toFixed(2)
+    ]);
+    
+    // Linha de total
+    resultData.push([
+      'TOTAL GERAL',
+      '-',
+      totalProfilesPerWeek.toFixed(2),
+      '-',
+      '-',
+      '-',
+      totalUST,
+      totalValue.toFixed(2)
+    ]);
+    
+    // Combinar todos os dados
+    const allData = [...headerData, ...resultData];
+    
+    // Criar worksheet
+    const worksheet = XLSX.utils.aoa_to_sheet(allData);
+    
+    // Adicionar à workbook
+    XLSX.utils.book_append_sheet(workbook, worksheet, 'Relatório UST');
+    
+    // Salvar arquivo
+    XLSX.writeFile(workbook, `relatorio-ust-${new Date().toISOString().split('T')[0]}.xlsx`);
   };
 
   return (
