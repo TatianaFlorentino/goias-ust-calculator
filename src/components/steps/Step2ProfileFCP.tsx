@@ -20,19 +20,19 @@ const Step2ProfileFCP: React.FC<Step2ProfileFCPProps> = ({
   return (
     <Card className="w-full animate-fade-in">
       <CardHeader className="text-center bg-gradient-to-r from-emerald-600 to-emerald-700 text-white rounded-t-lg">
-        <CardTitle className="text-2xl">Etapa 02 - Cadastro de Perfis FCP</CardTitle>
+        <CardTitle className="text-2xl">Etapa 02 - Cadastro de Perfis</CardTitle>
         <CardDescription className="text-gray-100">
-          Gerencie os perfis profissionais e seus fatores de complexidade
+          Gerencie os perfis profissionais com suas quantidades
         </CardDescription>
       </CardHeader>
       <CardContent className="space-y-6 p-6">
         <div className="bg-emerald-50 p-4 rounded-lg border border-emerald-200">
-          <h4 className="font-medium text-emerald-800 mb-2">Fator de Complexidade do Perfil (FCP)</h4>
+          <h4 className="font-medium text-emerald-800 mb-2">Perfis Profissionais</h4>
           <p className="text-sm text-emerald-800 mb-2">
-            O FCP é um multiplicador que representa a complexidade e especialização de cada perfil profissional.
+            Cadastre os perfis profissionais necessários e defina as quantidades para cada um.
           </p>
           <p className="text-xs text-gray-600">
-            Quanto maior o FCP, maior a complexidade e especialização do perfil.
+            Cada perfil deve ter uma quantidade específica conforme a necessidade do projeto.
           </p>
         </div>
 

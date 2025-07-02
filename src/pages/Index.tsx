@@ -5,9 +5,7 @@ import { useCalculator } from '@/hooks/useCalculator';
 import Step1PersonalInfo from '@/components/steps/Step1PersonalInfo';
 import Step2ProfileFCP from '@/components/steps/Step2ProfileFCP';
 import Step3GeneralParams from '@/components/steps/Step3GeneralParams';
-import Step4ProjectsAndProfiles from '@/components/steps/Step4ProjectsAndProfiles';
-import Step4SquadComposition from '@/components/steps/Step4SquadComposition';
-import Step5Summary from '@/components/steps/Step5Summary';
+import Step4Summary from '@/components/steps/Step4Summary';
 
 const Index = () => {
   const {
@@ -34,11 +32,9 @@ const Index = () => {
 
   const stepNames = [
     'Informações Pessoais',
-    'Cadastro de Perfis FCP',
+    'Cadastro de Perfis',
     'Parâmetros Gerais',
-    'Projetos e Perfis',
-    'Formato dos Squads',
-    'Resumo Geral'
+    'Resultado do Cálculo'
   ];
 
   const renderCurrentStep = () => {
@@ -68,39 +64,15 @@ const Index = () => {
         );
       case 4:
         return (
-          <Step4ProjectsAndProfiles
-            projects={calculatorData.projects}
-            profiles={calculatorData.profiles}
-            selectedProfileIds={selectedProfileIds}
-            squads={calculatorData.squads}
-            onAddProject={addProject}
-            onUpdateProject={updateProject}
-            onDeleteProject={deleteProject}
-            onToggleProfileSelection={toggleProfileSelection}
-            onSelectAllProfiles={selectAllProfiles}
-            onDeselectAllProfiles={deselectAllProfiles}
-            onAddSquadComposition={addSquadComposition}
-          />
-        );
-      case 5:
-        return (
-          <Step4SquadComposition
-            profiles={calculatorData.profiles}
-            selectedProfileIds={selectedProfileIds}
-            projects={calculatorData.projects}
-            squads={calculatorData.squads}
-            onAddSquad={addSquadComposition}
-            onUpdateSquad={updateSquadComposition}
-            onDeleteSquad={deleteSquadComposition}
-            onAddProfile={addProfile}
-          />
-        );
-      case 6:
-        return (
-          <Step5Summary
+          <Step4Summary
             results={calculateResults()}
             personalInfo={calculatorData.personalInfo}
             generalParams={calculatorData.generalParams}
+            profiles={calculatorData.profiles}
+            projects={calculatorData.projects}
+            onAddProject={addProject}
+            onUpdateProject={updateProject}
+            onDeleteProject={deleteProject}
           />
         );
       default:
@@ -114,7 +86,7 @@ const Index = () => {
       <div className="container mx-auto px-4 py-8">
         <StepIndicator 
           currentStep={currentStep} 
-          totalSteps={6} 
+          totalSteps={4} 
           stepNames={stepNames}
         />
         <div className="mt-8">
@@ -129,8 +101,8 @@ const Index = () => {
             Anterior
           </button>
           <button
-            onClick={() => setCurrentStep(Math.min(6, currentStep + 1))}
-            disabled={currentStep === 6}
+            onClick={() => setCurrentStep(Math.min(4, currentStep + 1))}
+            disabled={currentStep === 4}
             className="px-6 py-2 bg-emerald-600 text-white rounded-lg disabled:opacity-50 hover:bg-emerald-700 transition-colors"
           >
             Próximo

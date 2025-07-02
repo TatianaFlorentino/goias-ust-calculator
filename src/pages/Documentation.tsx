@@ -64,7 +64,7 @@ const Documentation = () => {
             <TabsTrigger value="business-rules">Regras de Negócio</TabsTrigger>
             <TabsTrigger value="methodology">Metodologia</TabsTrigger>
             <TabsTrigger value="step-by-step">Passo a Passo</TabsTrigger>
-            <TabsTrigger value="profiles">Perfis e FCP</TabsTrigger>
+            <TabsTrigger value="profiles">Perfis</TabsTrigger>
             <TabsTrigger value="calculations">Cálculos</TabsTrigger>
             <TabsTrigger value="examples">Exemplos</TabsTrigger>
           </TabsList>
@@ -152,11 +152,11 @@ const Documentation = () => {
                 <div className="space-y-4">
                   <h3 className="text-lg font-semibold text-gray-900">2. Perfis Profissionais</h3>
                   <div className="bg-gray-50 p-4 rounded-lg">
-                    <h4 className="font-medium mb-2">Fator de Complexidade do Perfil (FCP)</h4>
+                    <h4 className="font-medium mb-2">Definição de Perfis</h4>
                     <ul className="space-y-2 text-sm text-gray-700">
-                      <li>• <strong>1.0 - 2.0:</strong> Perfis básicos (Analista Jr., Técnico de Suporte)</li>
-                      <li>• <strong>2.1 - 3.5:</strong> Perfis intermediários (Analista Pleno, Desenvolvedor)</li>
-                      <li>• <strong>3.6 - 5.0:</strong> Perfis sêniores (Arquiteto, Especialista, Coordenador)</li>
+                      <li>• <strong>Perfis Básicos:</strong> Analista Jr., Técnico de Suporte</li>
+                      <li>• <strong>Perfis Intermediários:</strong> Analista Pleno, Desenvolvedor</li>
+                      <li>• <strong>Perfis Sêniores:</strong> Arquiteto, Especialista, Coordenador</li>
                     </ul>
                   </div>
                 </div>
@@ -280,13 +280,13 @@ const Documentation = () => {
                   <h3 className="text-lg font-semibold text-emerald-800 mb-4">Fórmula Base da UST</h3>
                   <div className="bg-white p-4 rounded border border-emerald-300">
                     <code className="text-lg text-emerald-700 font-mono">
-                      UST = FCP × Horas Semanais × Duração (semanas) × Valor UST
+                      UST = Quantidade × Horas Semanais × Duração (semanas) × Valor UST
                     </code>
                   </div>
                   <div className="mt-4 text-sm text-emerald-700">
                     <p><strong>Onde:</strong></p>
                     <ul className="mt-2 space-y-1">
-                      <li>• <strong>FCP:</strong> Fator de Complexidade do Perfil</li>
+                      <li>• <strong>Quantidade:</strong> Número de profissionais do perfil</li>
                       <li>• <strong>Horas Semanais:</strong> Carga horária semanal do profissional</li>
                       <li>• <strong>Duração:</strong> Período do projeto em semanas</li>
                       <li>• <strong>Valor UST:</strong> Valor unitário da UST (R$ 70,00)</li>
@@ -324,14 +324,14 @@ const Documentation = () => {
                   </div>
                 </div>
 
-                <div className="bg-blue-50 p-4 rounded-lg border border-blue-200">
-                  <h4 className="font-semibold text-blue-800 mb-2">Exemplo de Cálculo</h4>
-                  <div className="text-sm text-blue-700 space-y-2">
-                    <p><strong>Cenário:</strong> Desenvolvedor Pleno (FCP 2.5) trabalhando 40h/semana por 20 semanas</p>
-                    <p><strong>Cálculo:</strong> 2.5 × 40 × 20 × R$ 70,00 = R$ 140.000,00</p>
-                    <p><strong>USTs:</strong> 2.5 × 40 × 20 = 2.000 USTs</p>
+                  <div className="bg-blue-50 p-4 rounded-lg border border-blue-200">
+                    <h4 className="font-semibold text-blue-800 mb-2">Exemplo de Cálculo</h4>
+                    <div className="text-sm text-blue-700 space-y-2">
+                      <p><strong>Cenário:</strong> 2 Desenvolvedores Plenos trabalhando 40h/semana por 20 semanas</p>
+                      <p><strong>Cálculo:</strong> 2 × 40 × 20 × R$ 70,00 = R$ 112.000,00</p>
+                      <p><strong>USTs:</strong> 2 × 40 × 20 = 1.600 USTs</p>
+                    </div>
                   </div>
-                </div>
               </CardContent>
             </Card>
           </TabsContent>
@@ -353,13 +353,13 @@ const Documentation = () => {
                 },
                 {
                   step: 2,
-                  title: "Cadastro de Perfis FCP",
+                  title: "Cadastro de Perfis",
                   icon: Settings,
                   description: "Configuração dos perfis profissionais",
                   details: [
                     "Cadastro de perfis necessários para o projeto",
-                    "Definição do Fator de Complexidade (FCP) para cada perfil",
-                    "Validação dos valores conforme padrões CACTIC"
+                    "Definição da quantidade de profissionais para cada perfil",
+                    "Configuração conforme necessidades do projeto"
                   ]
                 },
                 {
