@@ -86,9 +86,11 @@ const Index = () => {
             generalParams={calculatorData.generalParams}
             profiles={calculatorData.profiles}
             projects={calculatorData.projects}
+            selectedProfileIds={selectedProfileIds}
             onAddProject={addProject}
             onUpdateProject={updateProject}
             onDeleteProject={deleteProject}
+            onAddSquadComposition={addSquadComposition}
           />
         );
       default:

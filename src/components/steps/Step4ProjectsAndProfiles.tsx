@@ -97,7 +97,10 @@ const Step4ProjectsAndProfiles: React.FC<Step4ProjectsAndProfilesProps> = ({
 
           {isAddingProject && (
             <ProjectForm
+              selectedProfileIds={selectedProfileIds}
+              profiles={profiles}
               onAddProject={onAddProject}
+              onAddSquadComposition={onAddSquadComposition}
               onCancel={() => setIsAddingProject(false)}
             />
           )}

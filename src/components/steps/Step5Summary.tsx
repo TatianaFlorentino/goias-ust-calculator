@@ -3,7 +3,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { FileText, Download, ChevronDown, ChevronUp, Plus } from 'lucide-react';
-import { CalculationResult, Project } from '@/types/calculator';
+import { CalculationResult, Project, SquadComposition } from '@/types/calculator';
 import ProjectForm from './project-profiles/ProjectForm';
 import ProjectCard from './project-profiles/ProjectCard';
 
@@ -13,9 +13,11 @@ interface Step5SummaryProps {
   generalParams: any;
   profiles: any[];
   projects: Project[];
+  selectedProfileIds: string[];
   onAddProject: (project: Omit<Project, 'id'>) => void;
   onUpdateProject: (id: string, project: Partial<Project>) => void;
   onDeleteProject: (id: string) => void;
+  onAddSquadComposition: (squad: Omit<SquadComposition, 'id'>) => void;
 }
 
 const Step5Summary: React.FC<Step5SummaryProps> = ({ 
@@ -24,9 +26,11 @@ const Step5Summary: React.FC<Step5SummaryProps> = ({
   generalParams,
   profiles,
   projects,
+  selectedProfileIds,
   onAddProject,
   onUpdateProject,
-  onDeleteProject
+  onDeleteProject,
+  onAddSquadComposition
 }) => {
   const [expandedCategories, setExpandedCategories] = useState<Set<string>>(new Set());
   const [isAddingProject, setIsAddingProject] = useState(false);
@@ -79,7 +83,10 @@ const Step5Summary: React.FC<Step5SummaryProps> = ({
 
           {isAddingProject && (
             <ProjectForm
+              selectedProfileIds={selectedProfileIds}
+              profiles={profiles}
               onAddProject={onAddProject}
+              onAddSquadComposition={onAddSquadComposition}
               onCancel={() => setIsAddingProject(false)}
             />
           )}
