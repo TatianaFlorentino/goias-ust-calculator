@@ -77,7 +77,7 @@ const Step4SquadComposition: React.FC<Step4SquadCompositionProps> = ({
   return (
     <Card className="w-full animate-fade-in">
       <CardHeader className="text-center bg-gradient-to-r from-emerald-600 to-emerald-700 text-white rounded-t-lg">
-        <CardTitle className="text-2xl">Etapa 04 - Composição de Squad</CardTitle>
+        <CardTitle className="text-2xl">Composição de Iniciativa - Sustentação ou Projeto</CardTitle>
         <CardDescription className="text-gray-100">
           Defina a quantidade de cada perfil profissional para sua iniciativa
         </CardDescription>

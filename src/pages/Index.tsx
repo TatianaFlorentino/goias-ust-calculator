@@ -35,7 +35,7 @@ const Index = () => {
     'Informações Pessoais',
     'Cadastro de Perfis',
     'Parâmetros Gerais',
-    'Composição de Squad',
+    'Composição de Iniciativa',
     'Resultado do Cálculo'
   ];
 
